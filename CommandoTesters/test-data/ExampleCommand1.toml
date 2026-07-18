@@ -1,0 +1,10 @@
+# This is the test command!
+# @REQUIRED
+[MyCommand]
+
+# Name of the user.
+# @REQUIRED
+username = "dave"
+
+# Name of the max user logins per year.
+maxLogins = 123

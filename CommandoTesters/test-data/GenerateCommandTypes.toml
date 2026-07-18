@@ -1,0 +1,14 @@
+# Generate data types for your target language from a TOML file.
+[Generate]
+
+# Path to input TOML file.
+# @REQUIRED
+Path = "input.toml"
+
+# The target output language.
+# @REQUIRED
+# @OPTIONS csharp|python|cpp
+TargetLanguage = "csharp"
+
+# The path where the output file will go.
+OuputPath = "."
