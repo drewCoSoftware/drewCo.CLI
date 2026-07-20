@@ -148,21 +148,23 @@ namespace Tommy
 
         #region TOML to native type cast
 
-        public static implicit operator string(TomlNode value) => value.ToString();
+        // REMOVED implicit operators.  This makes for big trouble, and is really
+        // a band-aid to overcome bad design.
+        // public static implicit operator string(TomlNode value) => value.ToString();
 
-        public static implicit operator int(TomlNode value) => (int) value.AsInteger.Value;
+        //public static implicit operator int(TomlNode value) => (int) value.AsInteger.Value;
 
-        public static implicit operator long(TomlNode value) => value.AsInteger.Value;
+        //public static implicit operator long(TomlNode value) => value.AsInteger.Value;
 
-        public static implicit operator float(TomlNode value) => (float) value.AsFloat.Value;
+        //public static implicit operator float(TomlNode value) => (float) value.AsFloat.Value;
 
-        public static implicit operator double(TomlNode value) => value.AsFloat.Value;
+        //public static implicit operator double(TomlNode value) => value.AsFloat.Value;
 
-        public static implicit operator bool(TomlNode value) => value.AsBoolean.Value;
+        //public static implicit operator bool(TomlNode value) => value.AsBoolean.Value;
 
-        public static implicit operator DateTime(TomlNode value) => value.AsDateTimeLocal.Value;
+        //public static implicit operator DateTime(TomlNode value) => value.AsDateTimeLocal.Value;
 
-        public static implicit operator DateTimeOffset(TomlNode value) => value.AsDateTimeOffset.Value;
+        //public static implicit operator DateTimeOffset(TomlNode value) => value.AsDateTimeOffset.Value;
 
         #endregion
     }

@@ -3,8 +3,43 @@
 namespace Commando
 {
     // =========================================================================================================================
-    internal static class Helpers
+    public static class Helpers
     {
+
+        /// <summary>
+        /// Get the TOML table that corresponds to the given command name.
+        /// </summary>
+        /// <remarks>
+        /// This function expects that there will be one, single table in
+        /// the TOML file that represents the command, otherwise it will throw an exception.
+        /// </remarks>
+        public static TomlTable FromFile(string path, string commandName)
+        {
+            using (var reader = File.OpenText(path))
+            {
+                TomlTable table = TOML.Parse(reader);
+
+
+                // TODO: Emit this block of code in the generator....
+                var keyCount = table.Keys.Count();
+                if (keyCount == 0 || keyCount > 1)
+                {
+                    throw new InvalidOperationException("Invalid number of keys!");
+                }
+                var key = table.Keys.ElementAt(0);
+                if (key != commandName)
+                {
+                    throw new InvalidOperationException($"Expecting command name: {commandName} but got: {key} instead!");
+                }
+
+                var res = table[key].AsTable;
+                if (res == null)
+                {
+                    throw new InvalidOperationException("Invalid table!");
+                }
+                return res;
+            }
+        }
 
         // ---------------------------------------------------------------------------------------------------------------------
         /// <summary>

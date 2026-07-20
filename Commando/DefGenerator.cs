@@ -63,7 +63,7 @@ public class DefGenerator
                         op.HelpText = txtc2.Text;
                         op.IsRequired = txtc2.Constraints.IsRequired;
                         op.Options = txtc2.Constraints.Options;
-
+                        op.DefaultValue = child.HasValue ? child.ToString()  : null;
                         def.Options.Add(op);
                     }
 

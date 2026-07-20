@@ -29,7 +29,10 @@
     <None Update="test-data\ExampleCommand1.toml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="test-data\GenerateCommandTypes.toml">
+    <None Update="test-data\GenerateCommandDef.toml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="test-data\GenerateCommand_1.toml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
