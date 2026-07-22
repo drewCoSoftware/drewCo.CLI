@@ -7,7 +7,7 @@ Path = "input.toml"
 
 # The target output language.
 # @REQUIRED
-# @OPTIONS csharp|python|cpp
+# @OPTIONS csharp,python,cpp
 TargetLanguage = "csharp"
 
 # The path where the output file will go.

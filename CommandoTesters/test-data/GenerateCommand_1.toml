@@ -1,4 +1,4 @@
-[GenerateCommand]
+[Generate]
 Path = "example.toml"
 TargetLanguage = "cpp"
 OuputPath = "the-output.cs"

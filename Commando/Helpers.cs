@@ -66,7 +66,7 @@ namespace Commando
                     else if (l.StartsWith("@OPTIONS"))
                     {
                         // This command has a set of valid options.
-                        string[] vals = l.Substring("@OPTIONS".Length).Split('|');
+                        string[] vals = l.Substring("@OPTIONS".Length).Split(',');
                         c.Options = (from x in vals select x.Trim()).ToArray();
                     }
                     else

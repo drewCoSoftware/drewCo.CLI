@@ -1,4 +1,5 @@
 using Commando;
+using Commando.Commands;
 using dhll.v1;
 using System.IO;
 using Tommy;
@@ -21,8 +22,8 @@ namespace CommandoTesters
         {
             string fromPath = Path.Combine("test-data", "GenerateCommand_1.toml");
 
-            var table  = Helpers.FromFile(fromPath, nameof(GenerateCommand));
-            var cmd = GenerateCommand.FromTable(table);
+            var table  = Helpers.FromFile(fromPath, nameof(Generate));
+            var cmd = Generate.FromTable(table);
 
             Assert.IsNotNull(cmd, "The deserialized command should not be null!");
 
@@ -37,17 +38,14 @@ namespace CommandoTesters
         [Test]
         public void CanGenerateCSharpCommandDefFromTOMLFile()
         {
-            var defs = ParseDefsFromFile("GenerateCommand_1.toml");
+            var defs = ParseDefsFromFile("GenerateCommandDef.toml");
             var def = defs.SingleOrDefault();
 
 
-
             var cg = new CodeGen();
-            cg.OutputCSharp(def, "test-output.cs");
+            cg.OutputCSharp(def, "test-output.cs", "Commando.Commands");
 
             Assert.Fail("please finish this test! (see below)");
-
-
 
 
             // NOTE: I'll do DHLL later since I don't really have function support in it at this time?
