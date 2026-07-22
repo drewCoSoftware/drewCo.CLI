@@ -4,38 +4,41 @@
 /// <summary>
 /// Our command definition.  Really just a way to export types to our target language of choice...
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
 public class CommandDef : Attribute
 {
-    public string Name { get; set; }
-    public string HelpText { get; set; }
+  ///// <summary>
+  ///// Concrete data type that this command corresponds to.
+  ///// </summary>
+  //public Type DataType { get; set; }
 
-    // Computed:
-    public List<CommandOption> Options { get; set; } = new List<CommandOption>();
+  public string Name { get; set; }
+  public string HelpText { get; set; }
+
+  // Computed:
+  public List<CommandOption> Options { get; set; } = new List<CommandOption>();
 }
 
 // =========================================================================================================================
-[AttributeUsage(AttributeTargets.Property)]
 public class CommandOption : Attribute
 {
-    public string Name { get; set; }
-    public Type DataType { get; set; }
-    public string DefaultValue { get; set; }
-    public string HelpText { get; set; }
+  public string Name { get; set; }
+  public Type DataType { get; set; }
+  public string DefaultValue { get; set; }
+  public string HelpText { get; set; }
 
 
-    // Constraints ==========================================================
-    /// <summary>
-    /// Is this option required?
-    /// </summary>
-    public bool IsRequired { get; set; } = false;
+  // Constraints ==========================================================
+  /// <summary>
+  /// Is this option required?
+  /// </summary>
+  public bool IsRequired { get; set; } = false;
 
-    /// <summary>
-    /// Set of possible option values.
-    /// </summary>
-    public string[]? Options { get; set; }
+  /// <summary>
+  /// Set of possible option values.
+  /// </summary>
+  public string[]? Options { get; set; }
 
-    // =======================================================================
+  // =======================================================================
 }
 
 // =========================================================================================================================
@@ -45,14 +48,14 @@ public class CommandOption : Attribute
 /// </summary>
 internal class Constraints
 {
-    /// <summary>
-    /// Indicates that the command is required.
-    /// </summary>
-    public bool IsRequired { get; set; }
+  /// <summary>
+  /// Indicates that the command is required.
+  /// </summary>
+  public bool IsRequired { get; set; }
 
-    /// <summary>
-    /// Set of options, if any.
-    /// </summary>
-    public string[]? Options { get; set; }
+  /// <summary>
+  /// Set of options, if any.
+  /// </summary>
+  public string[]? Options { get; set; }
 }
 

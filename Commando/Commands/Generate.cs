@@ -1,10 +1,9 @@
 ﻿// GENERATED CODE!  DO NOT EDIT BY HAND!
-using Commando;
 using Tommy;
 
 namespace Commando.Commands;
 
-public class Generate
+public class Generate : ICommand
 {
   public String Path = "input.toml";
   public String TargetLanguage = "csharp";
@@ -12,7 +11,7 @@ public class Generate
 
   public Generate() { }
 
-  public static Generate FromTable(TomlTable table)
+  public static Generate FromToml(TomlTable table)
   {
     var res = new Generate();
     res.Path = table["Path"].AsString.Value;

@@ -1,15 +1,6 @@
 ﻿using dhll.CodeGen;
 using drewCo.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using drewCo.Tools.Logging;
 
 namespace Commando
 {
@@ -31,8 +22,6 @@ namespace Commando
       }
 
       file.WriteLine("// GENERATED CODE!  DO NOT EDIT BY HAND!");
-
-      file.WriteLine("using Commando;");
       file.WriteLine("using Tommy;");
       file.NextLine();
 
@@ -42,7 +31,7 @@ namespace Commando
         file.NextLine();
       }
 
-      file.WriteLine($"public class {fromDef.Name}");
+      file.WriteLine($"public class {fromDef.Name} : {nameof(ICommand)}");
       file.OpenBlock(true);
 
       // This is where the different options would go......
@@ -85,7 +74,7 @@ namespace Commando
 
       // A function that will deserialize this against a TomlTable instance.
       file.NextLine();
-      file.WriteLine($"public static {fromDef.Name} FromTable(TomlTable table)");
+      file.WriteLine($"public static {fromDef.Name} FromToml(TomlTable table)");
       file.OpenBlock(true);
 
       file.WriteLine($"var res = new {fromDef.Name}();");
@@ -134,7 +123,7 @@ namespace Commando
         string useOpsVal = "null";
         if (op.Options != null)
         {
-          useOpsVal = $"new[] {{" + string.Join(", ", from x in op.Options select $"\"{x}\"") + "}";
+          useOpsVal = $"new[] {{ " + string.Join(", ", from x in op.Options select $"\"{x}\"") + " }";
         }
         file.WriteLine($"{opName}.Options = {useOpsVal};");
         file.WriteLine($"res.Options.Add({opName});");

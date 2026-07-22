@@ -1,6 +1,12 @@
 ﻿namespace Commando
 {
   // ==================================================================================================
+  public interface ICommand
+  {
+    public CommandValidationResult Validate();
+  }
+
+  // ==================================================================================================
   /// <summary>
   /// This is used when validating the commands that have been read in from a command line, file, etc.
   /// </summary>
