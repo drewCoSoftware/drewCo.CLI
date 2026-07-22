@@ -3,7 +3,8 @@
   // ==================================================================================================
   public interface ICommand
   {
-    public CommandValidationResult Validate();
+    CommandValidationResult Validate();
+    CommandDef Configure();
   }
 
   // ==================================================================================================

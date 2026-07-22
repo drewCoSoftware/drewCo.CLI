@@ -1,4 +1,4 @@
 [Generate]
 Path = "example.toml"
 TargetLanguage = "cpp"
-OuputPath = "the-output.cs"
+OutputPath = "the-output.cs"

@@ -1,4 +1,6 @@
-﻿using Commando.Commands;
+﻿using Antlr4.Runtime;
+using Commando.Commands;
+using drewCo.Tools;
 using drewCo.Tools.Logging;
 using System.Runtime.CompilerServices;
 using Tommy;
@@ -8,21 +10,55 @@ namespace Commando
   internal class Program
   {
     // ------------------------------------------------------------------------------------------
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
       // This is how we go about setting up the commands.
       var def1 = new Generate().Configure();
-      // var def2 = 
+
+      // TODO: We can come up with a more "C#" way to do this (i.e. generics) once we get a similar C++ library up and running.
+      var p = new Parser();
+      p.Register(new Generate(), t => Generate.FromToml(t), GenerateCode);
 
 
-      // We need to register the defs with the system.
-      // Then we need to interpret the command line args.
+      int res = p.ParseCommandLine(args);
 
 
+      return res;
+    }
 
 
+    // ------------------------------------------------------------------------------------------
+    private static int GenerateCode(object args)
+    {
+      var g = args as Generate;
+      if (g == null)
+      {
+        throw new InvalidCastException($"Could not cast object to instance of: {typeof(Generate)}!");
+      }
 
-      // Console.WriteLine("Hello, World!");
+      var generator = new DefGenerator();
+      var def = generator.ParseCommandDefsFromTOML(g.Path);
+      var cg = new CodeGen();
+
+      switch (g.TargetLanguage)
+      {
+        case "csharp":
+          string outDir = Path.GetDirectoryName(g.Path);
+          FileTools.CreateDirectory(outDir);
+
+          cg.OutputCSharp(def, g.OutputPath);
+
+          Log.Info($"Code file was saved to: {g.OutputPath}");
+
+          break;
+
+        default:
+          // NOTE: This condition should come up during command validation!
+          throw new InvalidOperationException($"Unsupported target language: {g.TargetLanguage}");
+      }
+
+
+      return 0;
     }
 
   }
@@ -45,8 +81,9 @@ namespace Commando
     /// <summary>
     /// NOTE: Command names are case-insensitive!
     /// </summary>
-    public void Register<T>(CommandDef def, Func<TomlTable, ICommand> hydrate, Func<object, int> onCommand)
+    public void Register(ICommand command, Func<TomlTable, ICommand> hydrate, Func<object, int> onCommand)
     {
+      var def = command.Configure();
       AllCommands.Add(def.Name, new DefEntry()
       {
         Def = def,

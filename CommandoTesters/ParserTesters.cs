@@ -25,7 +25,7 @@ namespace CommandoTesters
       bool cmdExecuted = false;
 
       var cli = new Parser();
-      cli.Register<Generate>(def1, (t) =>
+      cli.Register(new Generate(), (t) =>
       {
         return Generate.FromToml(t);
       },
@@ -73,7 +73,7 @@ namespace CommandoTesters
       // Make sure that our data is correct.....
       Assert.That(cmd.Path, Is.EqualTo("example.toml"));
       Assert.That(cmd.TargetLanguage, Is.EqualTo("cpp"));
-      Assert.That(cmd.OuputPath, Is.EqualTo("the-output.cs"));
+      Assert.That(cmd.OutputPath, Is.EqualTo("the-output.cs"));
 
     }
 
@@ -81,8 +81,7 @@ namespace CommandoTesters
     [Test]
     public void CanGenerateCSharpCommandDefFromTOMLFile()
     {
-      var defs = ParseDefsFromFile("GenerateCommandDef.toml");
-      var def = defs.SingleOrDefault();
+      var def = ParseDefFromFile("GenerateCommandDef.toml");
 
       const string OUTPUT_PATH = "test-output.cs";
       var cg = new CodeGen();
@@ -106,10 +105,7 @@ namespace CommandoTesters
     [Test]
     public void CanParseCommandDefsFromTOMFile()
     {
-      var defs = ParseDefsFromFile("GenerateCommandTypes.toml");
-
-      Assert.That(defs.Length, Is.EqualTo(1), "There should be one command definition!");
-      var def = defs[0];
+      var def = ParseDefFromFile("GenerateCommandDef.toml");
 
       Assert.That(def.Options.Count, Is.EqualTo(3), "There should be three commands on this def.");
 
@@ -127,12 +123,13 @@ namespace CommandoTesters
     }
 
 
-    private static CommandDef[] ParseDefsFromFile(string fileName)
+    // --------------------------------------------------------------------------------------------------------------------------
+    private static CommandDef ParseDefFromFile(string fileName)
     {
       string path = Path.Combine("test-data", fileName);
       var generator = new DefGenerator();
-      var defs = generator.ParseCommandDefsFromTOML(path);
-      return defs;
+      var res = generator.ParseCommandDefsFromTOML(path);
+      return res;
     }
   }
 }

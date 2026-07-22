@@ -7,7 +7,7 @@ public class Generate : ICommand
 {
   public String Path = "input.toml";
   public String TargetLanguage = "csharp";
-  public String OuputPath = ".";
+  public String OutputPath = ".";
 
   public Generate() { }
 
@@ -16,7 +16,7 @@ public class Generate : ICommand
     var res = new Generate();
     res.Path = table["Path"].AsString.Value;
     res.TargetLanguage = table["TargetLanguage"].AsString.Value;
-    res.OuputPath = table["OuputPath"].AsString.Value;
+    res.OutputPath = table["OutputPath"].AsString.Value;
     return res;
   }
 
@@ -51,11 +51,11 @@ public class Generate : ICommand
     targetLanguageOption.Options = new[] { "csharp", "python", "cpp" };
     res.Options.Add(targetLanguageOption);
 
-    var ouputPathOption = new CommandOption();
-    ouputPathOption.Name = "OuputPath";
-    ouputPathOption.IsRequired = false;
-    ouputPathOption.Options = null;
-    res.Options.Add(ouputPathOption);
+    var outputPathOption = new CommandOption();
+    outputPathOption.Name = "OutputPath";
+    outputPathOption.IsRequired = false;
+    outputPathOption.Options = null;
+    res.Options.Add(outputPathOption);
 
     return res;
   }
