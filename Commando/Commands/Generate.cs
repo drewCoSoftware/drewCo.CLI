@@ -14,9 +14,9 @@ public class Generate : ICommand
   public static Generate FromToml(TomlTable table)
   {
     var res = new Generate();
-    res.Path = table["Path"].AsString.Value;
-    res.TargetLanguage = table["TargetLanguage"].AsString.Value;
-    res.OutputPath = table["OutputPath"].AsString.Value;
+    res.Path = table.GetString("Path");
+    res.TargetLanguage = table.GetString("TargetLanguage");
+    res.OutputPath = table.GetString("OutputPath", ".");
     return res;
   }
 
@@ -41,18 +41,21 @@ public class Generate : ICommand
 
     var pathOption = new CommandOption();
     pathOption.Name = "Path";
+    pathOption.DataType = typeof(System.String);
     pathOption.IsRequired = true;
     pathOption.Options = null;
     res.Options.Add(pathOption);
 
     var targetLanguageOption = new CommandOption();
     targetLanguageOption.Name = "TargetLanguage";
+    targetLanguageOption.DataType = typeof(System.String);
     targetLanguageOption.IsRequired = true;
     targetLanguageOption.Options = new[] { "csharp", "python", "cpp" };
     res.Options.Add(targetLanguageOption);
 
     var outputPathOption = new CommandOption();
     outputPathOption.Name = "OutputPath";
+    outputPathOption.DataType = typeof(System.String);
     outputPathOption.IsRequired = false;
     outputPathOption.Options = null;
     res.Options.Add(outputPathOption);

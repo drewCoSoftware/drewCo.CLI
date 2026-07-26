@@ -1,6 +1,7 @@
 using Commando;
 using Commando.Commands;
 using dhll.v1;
+using System.Data;
 using System.IO;
 using System.Text;
 using Tommy;
@@ -14,16 +15,80 @@ namespace CommandoTesters
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
+    /// This shows that we can parse out commands + their options directly from the command line.
+    /// It shows that both the actual property name, or aliases / positional parameters can be used.
+    /// </summary>
+    [Test]
+    public void CanParseCommandFromCommandLine()
+    {
+
+      bool cmdExecuted = false;
+
+      var def1 = new Generate().Configure();
+      var cli = new SimParser();
+      cli.Register(new Generate(), (t) =>
+      {
+        return Generate.FromToml(t);
+      },
+      (g) =>
+      {
+        var cmd = g as Generate;
+        if (cmd == null) { throw new InvalidOperationException("Incorrect command type!"); }
+
+        // OK, now 
+        cmdExecuted = true;
+        return 0;
+      });
+
+
+
+      // Case: We have called the command, and we are including the required params via MemberName
+      {
+        const string TEST_PATH = "path-2";
+        const string TEST_LANG = "cpp";
+        
+        cmdExecuted = false;
+        var args = new[] { "generate", "--Path", TEST_PATH, "--TargetLanguage", TEST_LANG };
+        int cliRes = cli.ParseCommandLine(args);
+
+        Assert.That(cliRes, Is.EqualTo(0), "This command should have run!");
+        Assert.IsTrue(cmdExecuted, "The command should have executed!");
+      }
+
+      // Case: We have called the command, but we are missing required paramters.
+      {
+        cmdExecuted = false;
+        var args = new[] { "generate" };
+        int cliRes = cli.ParseCommandLine(args);
+
+        Assert.That(cliRes, Is.EqualTo(Parser.INVALID_COMMAND), "This command should be invalid!");
+        Assert.IsFalse(cmdExecuted, "The command should not have executed!");
+      }
+
+      // Case: Show that an invalid command name will fail.
+      {
+        cmdExecuted = false;
+        var args = new[] { "badcommand" };
+
+        int cliRes = cli.ParseCommandLine(args);
+
+        Assert.That(cliRes, Is.EqualTo(Parser.INVALID_COMMAND), "This command should be invalid!");
+        Assert.IsFalse(cmdExecuted, "The command should not have executed!");
+      }
+
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
     /// This shows that we can get a validated instance of a command from a file on disk.
     /// </summary>
     [Test]
     public void CanParseCommandFromTomlFile()
     {
-      var def1 = new Generate().Configure();
-
-
       bool cmdExecuted = false;
 
+
+      var def1 = new Generate().Configure();
       var cli = new Parser();
       cli.Register(new Generate(), (t) =>
       {

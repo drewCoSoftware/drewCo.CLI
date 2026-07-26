@@ -81,8 +81,13 @@ namespace Commando
 
       foreach (var item in fromDef.Options)
       {
-        string conv = $".{AsType(item.DataType)}.Value;";
-        file.WriteLine($"res.{item.Name} = table[\"{item.Name}\"]{conv}");
+        string useArgs = $"\"{item.Name}\"";
+        if (!item.IsRequired && item.DefaultValue != null)
+        {
+          useArgs += ", " + GetDefaultValuesString(item);
+        }
+        string getValueCall = $"{GetValueByType(item.DataType)}({useArgs})";
+        file.WriteLine($"res.{item.Name} = table.{getValueCall};");
       }
       file.WriteLine("return res;");
       file.CloseBlock(1);
@@ -96,6 +101,19 @@ namespace Commando
       file.Save(toPath);
 
       Log.Info($"Wrote C# code to file: {toPath}");
+    }
+
+    // --------------------------------------------------------------------------------
+    private string GetDefaultValuesString(CommandOption item)
+    {
+      if (item.DataType == typeof(string))
+      {
+        return $"\"{item.DefaultValue}\"";
+      }
+      else
+      {
+        return item.DefaultValue;
+      }
     }
 
     // --------------------------------------------------------------------------------
@@ -117,7 +135,7 @@ namespace Commando
         var opName = $"{StringTools.LowerFirst(op.Name)}Option";
         file.WriteLine($"var {opName} = new CommandOption();");
         file.WriteLine($"{opName}.Name = \"{op.Name}\";");
-
+        file.WriteLine($"{opName}.DataType = typeof({op.DataType});");
         file.WriteLine($"{opName}.IsRequired = {(op.IsRequired ? "true" : "false")};");
 
         string useOpsVal = "null";
@@ -179,6 +197,28 @@ namespace Commando
     }
 
     // --------------------------------------------------------------------------------
+    public string GetValueByType(Type fromType)
+    {
+      if (fromType == typeof(string))
+      {
+        return "GetString";
+      }
+      else if (fromType == typeof(int))
+      {
+        return "GetInteger";
+      }
+      else if (fromType == typeof(long))
+      {
+        return "GetLong";
+      }
+      // Other cases here.....
+      else
+      {
+        throw new ArgumentOutOfRangeException($"Unsupported type: {fromType}!");
+      }
+    }
+
+    // --------------------------------------------------------------------------------
     /// <summary>
     /// Bandaid function to get over odd Tommy API...
     /// </summary>
@@ -192,7 +232,6 @@ namespace Commando
       {
         return "AsInteger";
       }
-
       // Other cases here.....
       else
       {

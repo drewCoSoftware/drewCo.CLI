@@ -4,28 +4,42 @@
 /// <summary>
 /// Our command definition.  Really just a way to export types to our target language of choice...
 /// </summary>
-public class CommandDef : Attribute
+public class CommandDef
 {
-  ///// <summary>
-  ///// Concrete data type that this command corresponds to.
-  ///// </summary>
-  //public Type DataType { get; set; }
-
   public string Name { get; set; }
   public string HelpText { get; set; }
 
   // Computed:
   public List<CommandOption> Options { get; set; } = new List<CommandOption>();
+
+
+  // --------------------------------------------------------------------------------------------------------------------------
+  public CommandOption? GetOptionByName(string nextArg)
+  {
+    foreach (var item in Options)
+    {
+      if ("--" + item.Name == nextArg) { return item; }
+      if (item.HasShortcut(nextArg)) { return item; }
+    }
+
+    // No match!
+    return null;
+  }
+
 }
 
 // =========================================================================================================================
-public class CommandOption : Attribute
+public class CommandOption
 {
   public string Name { get; set; }
   public Type DataType { get; set; }
   public string DefaultValue { get; set; }
   public string HelpText { get; set; }
 
+  /// <summary>
+  /// This is used during parsing.
+  /// </summary>
+  public bool IsValid { get; set; } = true;
 
   // Constraints ==========================================================
   /// <summary>
@@ -38,7 +52,14 @@ public class CommandOption : Attribute
   /// </summary>
   public string[]? Options { get; set; }
 
-  // =======================================================================
+
+  // --------------------------------------------------------------------------------------------------------------------------
+  internal bool HasShortcut(string nextArg)
+  {
+    // TEMP: 
+    return false;
+  }
+
 }
 
 // =========================================================================================================================
