@@ -1,10 +1,6 @@
 using Commando;
 using Commando.Commands;
-using dhll.v1;
-using System.Data;
-using System.IO;
 using System.Text;
-using Tommy;
 
 namespace CommandoTesters
 {
