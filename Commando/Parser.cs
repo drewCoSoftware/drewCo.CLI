@@ -5,10 +5,8 @@ namespace Commando
   // ==============================================================================================================================
   public class Parser
   {
-    // REFACTOR:
-    // CLI should be setup so that use provides the return value if there are errors.
-    public const int INVALID_COMMAND = -1;
-    public const int HELP_COMMAND = -2;
+    public const int DEFAULT_ERROR_CODE = -1;
+    private const string HELP_COMMAND = "--help";
 
     private class DefEntry
     {
@@ -18,6 +16,16 @@ namespace Commando
     }
 
     private Dictionary<string, DefEntry> AllCommands = new Dictionary<string, DefEntry>(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The error code that will be reported if no commands run, or if help is printed.
+    /// </summary>
+    public int ErrorCode { get; private set; } = DEFAULT_ERROR_CODE;
+
+    public Parser(int errCode_ = DEFAULT_ERROR_CODE)
+    {
+      ErrorCode = errCode_;
+    }
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
@@ -49,16 +57,11 @@ namespace Commando
     {
       bool printHelp = false;
 
-      if (args.Length == 0)
+      if (args.Length == 0 || args[0] == HELP_COMMAND)
       {
         // Print Help.
         PrintHelp();
-        return INVALID_COMMAND;
-      }
-      else if (args[0] == "--help")
-      {
-        PrintHelp();
-        return HELP_COMMAND;
+        return ErrorCode;
       }
 
       string useCommand = null!;
@@ -89,7 +92,7 @@ namespace Commando
         // TODO: Maybe some different text here depending on if we used a file or not....
         Console.WriteLine($"Unknown command: {args[0]}!");
         PrintHelp();
-        return INVALID_COMMAND;
+        return ErrorCode;
       }
 
       printHelp = ParseOptionValues(args, printHelp, table, entry);
@@ -121,7 +124,7 @@ namespace Commando
           PrintHelp();
         }
 
-        return INVALID_COMMAND;
+        return ErrorCode;
       }
 
 
@@ -149,7 +152,7 @@ namespace Commando
         {
           // I think we can just read them off one by one:
           string nextArg = args[i];
-          if (nextArg == "--help")
+          if (nextArg == HELP_COMMAND)
           {
             printHelp = true;
             continue;

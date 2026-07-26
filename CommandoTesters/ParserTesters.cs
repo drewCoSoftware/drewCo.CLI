@@ -57,7 +57,7 @@ namespace CommandoTesters
         var args = new[] { "generate" };
         int cliRes = cli.ParseCommandLine(args);
 
-        Assert.That(cliRes, Is.EqualTo(Parser.INVALID_COMMAND), "This command should be invalid!");
+        Assert.That(cliRes, Is.EqualTo(Parser.DEFAULT_ERROR_CODE), "This command should be invalid!");
         Assert.IsFalse(cmdExecuted, "The command should not have executed!");
       }
 
@@ -68,7 +68,7 @@ namespace CommandoTesters
 
         int cliRes = cli.ParseCommandLine(args);
 
-        Assert.That(cliRes, Is.EqualTo(Parser.INVALID_COMMAND), "This command should be invalid!");
+        Assert.That(cliRes, Is.EqualTo(Parser.DEFAULT_ERROR_CODE), "This command should be invalid!");
         Assert.IsFalse(cmdExecuted, "The command should not have executed!");
       }
 
