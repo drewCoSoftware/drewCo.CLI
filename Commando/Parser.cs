@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Reflection;
+using System.Security.Cryptography;
 using Tommy;
 
 namespace Commando
@@ -45,6 +46,17 @@ namespace Commando
         Hydrate = hydrate,
         OnCommand = onCommand
       });
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    private void PrintVersion()
+    {
+      var asm = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+      var asmName = asm.GetName();
+
+      HelpWriter.Init();
+      HelpWriter.WriteMessage(asmName.Name + " " + asmName.Version.ToString());
+
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
@@ -100,6 +112,13 @@ namespace Commando
         PrintHelp();
         return ErrorCode;
       }
+
+      if (args.Contains(VERSION_COMMAND))
+      {
+        PrintVersion();
+        return ErrorCode;
+      }
+
 
       string useCommand = null!;
       TomlTable table = null!;
