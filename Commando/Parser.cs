@@ -1,4 +1,5 @@
-﻿using Tommy;
+﻿using System.Security.Cryptography;
+using Tommy;
 
 namespace Commando
 {
@@ -7,6 +8,7 @@ namespace Commando
   {
     public const int DEFAULT_ERROR_CODE = -1;
     private const string HELP_COMMAND = "--help";
+    private const string VERSION_COMMAND = "--version";
 
     private class DefEntry
     {
@@ -22,6 +24,9 @@ namespace Commando
     /// </summary>
     public int ErrorCode { get; private set; } = DEFAULT_ERROR_CODE;
 
+    private HelpWriter HelpWriter = new HelpWriter();
+
+    // --------------------------------------------------------------------------------------------------------------------------
     public Parser(int errCode_ = DEFAULT_ERROR_CODE)
     {
       ErrorCode = errCode_;
@@ -43,13 +48,45 @@ namespace Commando
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    private void PrintHelp()
+    private void PrintHelp(string? useCommand = null)
     {
-      if (Console.IsOutputRedirected) { return; }
-      if (Console.BufferWidth == 0) { return; }
+      HelpWriter.Init();
+      HelpWriter.WriteMessage("TODO: Program version");
+      HelpWriter.WriteMessage("TODO: Copyright data");
+      HelpWriter.WriteMessage();
 
-      // Spit out the list of commands and their help text....
-      Console.WriteLine("TODO: Print the help content!");
+
+      HelpWriter.SetIndent(2);
+
+      if (useCommand != null)
+      {
+        // Display the help for this specific command.
+        var match = AllCommands[useCommand];
+
+        foreach (var item in match.Def.Options)
+        {
+          HelpWriter.WriteMessage(item.Name, item.HelpText);
+          HelpWriter.WriteMessage();
+        }
+      }
+      else
+      {
+        // Display help for all commands...
+        foreach (var item in AllCommands.Values)
+        {
+          HelpWriter.WriteMessage(item.Def.Name, item.Def.HelpText);
+          HelpWriter.WriteMessage();
+        }
+        HelpWriter.WriteMessage(HELP_COMMAND, "Display help information for a specific command.");
+        HelpWriter.WriteMessage();
+        HelpWriter.WriteMessage(VERSION_COMMAND, "Display version information.");
+        HelpWriter.WriteMessage();
+      }
+
+
+
+
+      HelpWriter.SetIndent(0);
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
@@ -108,22 +145,14 @@ namespace Commando
         //Console.WriteLine("Print help for this command!");
         foreach (var item in vr.Errors)
         {
-          Console.WriteLine(item);
+          Console.WriteLine(item.Message);
         }
         printHelp = true;
       }
 
       if (printHelp)
       {
-        if (useCommand != null)
-        {
-          PrintHelpForCommand(useCommand);
-        }
-        else
-        {
-          PrintHelp();
-        }
-
+        PrintHelp(useCommand);
         return ErrorCode;
       }
 
@@ -244,11 +273,6 @@ namespace Commando
       return args[index];
     }
 
-    // --------------------------------------------------------------------------------------------------------------------------
-    private void PrintHelpForCommand(string useCommand)
-    {
-      Console.WriteLine("TODO: Print help for command!");
-    }
   }
 
 

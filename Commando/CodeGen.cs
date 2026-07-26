@@ -129,12 +129,14 @@ namespace Commando
 
       file.WriteLine($"var res = new CommandDef();");
       file.WriteLine($"res.Name = \"{def.Name}\";");
+      file.WriteLine($"res.HelpText = \"{def.HelpText}\";");
       foreach (var op in def.Options)
       {
         file.NextLine();
         var opName = $"{StringTools.LowerFirst(op.Name)}Option";
         file.WriteLine($"var {opName} = new CommandOption();");
         file.WriteLine($"{opName}.Name = \"{op.Name}\";");
+        file.WriteLine($"{opName}.HelpText = \"{op.HelpText}\";");
         file.WriteLine($"{opName}.DataType = typeof({op.DataType});");
         file.WriteLine($"{opName}.IsRequired = {(op.IsRequired ? "true" : "false")};");
 
@@ -238,27 +240,6 @@ namespace Commando
         throw new ArgumentOutOfRangeException($"Unsupported type: {fromType}!");
       }
     }
-
-    //// --------------------------------------------------------------------------------
-    //public void OutputCSharp(CommandDef fromDef, Stream toStream)
-    //{
-    //    var sb = new StringBuilder();
-
-
-    //    var file = new CodeFile();
-    //    file.WriteLine($"[Command(\"{fromDef.Name}\")]");
-
-    //    file.WriteLine($"public class {fromDef.Name}");
-    //    file.OpenBlock();
-    //    file.WriteLine("// wow!");
-    //    file.CloseBlock();
-
-    //    file.Save(
-
-    //    string res = sb.ToString();
-    //    var data = Encoding.UTF8.GetBytes(res);
-    //    toStream.Write(data, 0, data.Length);   
-    //}
 
   }
 }
