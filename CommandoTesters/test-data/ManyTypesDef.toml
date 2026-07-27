@@ -1,0 +1,17 @@
+# This is just some fake command that we use to test support
+# for different data types.
+[ManyTypes]
+IsTest = false
+
+# Just a name.
+# @ALIAS -m, --my-alias
+Name = "Name"
+Number = 123
+Pie = 3.1415926
+Animals = ["Dog", "Cat", "Monkey"]
+PickThree = [42, 27, 999]
+
+#[ManyTypes.Nested]
+#Complex = true
+#Power = "Bungie Gum"
+#

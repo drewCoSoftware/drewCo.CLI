@@ -1,4 +1,6 @@
-﻿namespace Commando;
+﻿using System.Net.Http.Headers;
+
+namespace Commando;
 
 // =========================================================================================================================
 /// <summary>
@@ -14,12 +16,13 @@ public class CommandDef
 
 
   // --------------------------------------------------------------------------------------------------------------------------
-  public CommandOption? GetOptionByName(string nextArg)
+  public CommandOption? GetOptionByName(string optionNameOrAlias)
   {
     foreach (var item in Options)
     {
-      if ("--" + item.Name == nextArg) { return item; }
-      if (item.HasShortcut(nextArg)) { return item; }
+      if (item.Name == optionNameOrAlias) { return item; }
+      if ("--" + item.Name == optionNameOrAlias) { return item; }
+      if (item.HasAlias(optionNameOrAlias)) { return item; }
     }
 
     // No match!
@@ -42,6 +45,7 @@ public class CommandOption
   public bool IsValid { get; set; } = true;
 
   // Constraints ==========================================================
+  // TODO: We can just use an instance of the constraints class instead?
   /// <summary>
   /// Is this option required?
   /// </summary>
@@ -52,12 +56,16 @@ public class CommandOption
   /// </summary>
   public string[]? Options { get; set; }
 
+  /// <summary>
+  /// Any defined aliases.
+  /// </summary>
+  public string[]? Aliases { get; set; }
 
   // --------------------------------------------------------------------------------------------------------------------------
-  internal bool HasShortcut(string nextArg)
+  internal bool HasAlias(string nextArg)
   {
-    // TEMP: 
-    return false;
+    bool res = Aliases?.Contains(nextArg) ?? false;
+    return res;
   }
 
 }
@@ -78,5 +86,7 @@ internal class Constraints
   /// Set of options, if any.
   /// </summary>
   public string[]? Options { get; set; }
+
+  public string[]? Aliases { get; set; }
 }
 

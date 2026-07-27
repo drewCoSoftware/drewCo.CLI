@@ -70,6 +70,29 @@ namespace Commando
             string[] vals = l.Substring("@OPTIONS".Length).Split(',');
             c.Options = (from x in vals select x.Trim()).ToArray();
           }
+          else if (l.StartsWith("@ALIAS"))
+          {
+            // There are some aliases for this command:
+            string[] aliasParts = l.Substring("@ALIAS".Length).Split(',');
+            c.Aliases = (from x in aliasParts select x.Trim()).ToArray();
+
+            // Validate that there is at most one short, and one long alias.
+            int shortCount = 0;
+            int longCount = 0;
+            int otherCount = 0;
+            foreach (var item in c.Aliases)
+            {
+              if (item.StartsWith("--")) { ++longCount; continue; }
+              if (item.StartsWith("-")) { ++shortCount; continue; }
+              else { otherCount++; }
+            }
+
+            if (shortCount > 1 || longCount > 1 || otherCount > 0) {
+              throw new InvalidOperationException("Invalid alias specification!");
+            }
+
+
+          }
           else
           {
             text.Add(useLine);
@@ -95,6 +118,33 @@ namespace Commando
       if (fromNode.IsDateTimeOffset) { return typeof(DateTimeOffset); }
       if (fromNode.IsDateTime) { return typeof(DateTime); }
       if (fromNode.IsBoolean) { return typeof(bool); }
+
+      // For our arrays, all children must be of the same type....
+      if (fromNode.IsArray)
+      {
+
+        var allTypes = new List<Type>();
+        var kids = fromNode.AsArray.Children;
+        foreach (var item in kids)
+        {
+          allTypes.Add(GetDataType(item));
+        }
+        allTypes = allTypes.Distinct().ToList();
+
+        Type arrayType = allTypes[0];
+        if (allTypes.Count > 1)
+        {
+          arrayType = typeof(object);
+        }
+
+        var res = arrayType.MakeArrayType(1);
+        return res;
+      }
+
+      if (fromNode.IsTable)
+      {
+        throw new NotSupportedException("We don't support nested tables yet!");
+      }
 
       // NOTE: We can add array support or whatever later.
       // The child nodes will have to be evaluated, and will have to all be of the same type tho.

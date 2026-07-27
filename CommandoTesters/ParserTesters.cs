@@ -8,6 +8,55 @@ namespace CommandoTesters
   // ==============================================================================================================================
   public class Tests
   {
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Shows that multiple defs can be generated / contained in a single TOML file.
+    /// </summary>
+    [Test]
+    public void CanGenerateMultipleDefsFromSingleInput()
+    {
+      Assert.Fail("Please finish this test!");
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// This test shows that we can define + use aliases (i.e. -m, --my-thing type names) with our command options. 
+    /// </summary>
+    [Test]
+    public void CanUseOptionNameAliases()
+    {
+      var def = ParseDefFromFile("ManyTypesDef.toml");
+      var shortAlias = def.GetOptionByName("-m");
+      var longAlias = def.GetOptionByName("--my-alias");
+
+      Assert.IsNotNull(shortAlias);
+      Assert.IsNotNull(longAlias);
+      Assert.That(shortAlias, Is.SameAs(longAlias), "Both aliases should resolve to the same command!");
+    }
+
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// This test case shows that we have support for / can deal with integers, datetimes, arrays, etc.
+    /// </summary>
+    [Test]
+    public void ParserSupportsTOMLDataTypesAndArrays()
+    {
+      var def = ParseDefFromFile("ManyTypesDef.toml");
+
+      // Make sure that the def + its defaults are represented correctly.
+      // NOTE: Just add to this as you see fit.
+      {
+        // String Array Type
+        var op = def.GetOptionByName("Animals");
+        Assert.That(op.DataType.Name, Is.EqualTo("String[*]"));
+      }
+      {
+        // Integer Array Type
+        var op = def.GetOptionByName("PickThree");
+        Assert.That(op.DataType.Name, Is.EqualTo("Int32[*]"));
+      }
+    }
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
@@ -42,7 +91,7 @@ namespace CommandoTesters
       {
         const string TEST_PATH = "path-2";
         const string TEST_LANG = "cpp";
-        
+
         cmdExecuted = false;
         var args = new[] { "generate", "--Path", TEST_PATH, "--TargetLanguage", TEST_LANG };
         int cliRes = cli.ParseCommandLine(args);

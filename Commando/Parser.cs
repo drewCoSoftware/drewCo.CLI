@@ -49,6 +49,7 @@ namespace Commando
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
+    // TODO: Shared location or otherwise.....
     private void PrintVersion()
     {
       var asm = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
@@ -56,7 +57,6 @@ namespace Commando
 
       HelpWriter.Init();
       HelpWriter.WriteMessage(asmName.Name + " " + asmName.Version.ToString());
-
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
