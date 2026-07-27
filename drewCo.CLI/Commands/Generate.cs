@@ -1,7 +1,7 @@
 ﻿// GENERATED CODE!  DO NOT EDIT BY HAND!
 using Tommy;
 
-namespace Commando.Commands;
+namespace drewCo.CLI.Commands;
 
 public class Generate : ICommand
 {

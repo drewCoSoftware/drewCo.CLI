@@ -2,7 +2,7 @@
 using drewCo.Tools;
 using drewCo.Tools.Logging;
 
-namespace Commando
+namespace drewCo.CLI
 {
 
   // ==================================================================================================

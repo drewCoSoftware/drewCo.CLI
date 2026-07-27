@@ -1,6 +1,6 @@
 ﻿using Tommy;
 
-namespace Commando
+namespace drewCo.CLI
 {
   // =========================================================================================================================
   public static class Helpers

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Commando\Commando.csproj" />
+    <ProjectReference Include="..\drewCo.CLI\drewCo.CLI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

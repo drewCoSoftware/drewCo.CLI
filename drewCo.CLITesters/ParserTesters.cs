@@ -1,8 +1,8 @@
-using Commando;
-using Commando.Commands;
+using drewCo.CLI;
+using drewCo.CLI.Commands;
 using System.Text;
 
-namespace CommandoTesters
+namespace drewCo.CLITesters
 {
 
   // ==============================================================================================================================
@@ -195,10 +195,10 @@ namespace CommandoTesters
 
       const string OUTPUT_PATH = "test-output.cs";
       var cg = new CodeGen();
-      cg.OutputCSharp(def, OUTPUT_PATH, "Commando.Commands");
+      cg.OutputCSharp(def, OUTPUT_PATH, "drewCo.CLI.Commands");
 
       string data = File.ReadAllText(OUTPUT_PATH, Encoding.UTF8);
-      string refData = File.ReadAllText("..\\..\\..\\..\\Commando\\Commands\\Generate.cs", Encoding.UTF8);
+      string refData = File.ReadAllText("..\\..\\..\\..\\drewCo.CLI\\Commands\\Generate.cs", Encoding.UTF8);
 
       // Yes, this is correct.  We expect the output of the file from this test case
       // to be used in the actual program, verbatim.

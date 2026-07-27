@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tommy;
 
-namespace Commando;
+namespace drewCo.CLI;
 
 // ======================================================================================================================================================
 public class DefGenerator

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Tommy;
 
-namespace Commando
+namespace drewCo.CLI
 {
   // ==============================================================================================================================
   public class Parser

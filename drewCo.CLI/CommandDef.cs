@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 
-namespace Commando;
+namespace drewCo.CLI;
 
 // =========================================================================================================================
 /// <summary>
