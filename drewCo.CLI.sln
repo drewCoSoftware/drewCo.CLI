@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "drewCo.CLITesters", "drewCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dhll", "..\dhll\dhll\dhll.csproj", "{AECAFB25-4DF1-CE1E-38B5-90D35730B3B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "drewCo.CLI.Tools", "drewCo.CLI.Tools\drewCo.CLI.Tools.csproj", "{931C2A96-5D07-422D-BC6E-577D40F602E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{AECAFB25-4DF1-CE1E-38B5-90D35730B3B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AECAFB25-4DF1-CE1E-38B5-90D35730B3B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AECAFB25-4DF1-CE1E-38B5-90D35730B3B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{931C2A96-5D07-422D-BC6E-577D40F602E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{931C2A96-5D07-422D-BC6E-577D40F602E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{931C2A96-5D07-422D-BC6E-577D40F602E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{931C2A96-5D07-422D-BC6E-577D40F602E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

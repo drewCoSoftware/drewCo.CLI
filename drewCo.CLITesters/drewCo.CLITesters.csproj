@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\drewCo.CLI.Tools\drewCo.CLI.Tools.csproj" />
     <ProjectReference Include="..\drewCo.CLI\drewCo.CLI.csproj" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 using drewCo.Tools;
 using drewCo.Tools.Logging;
 
-namespace drewCo.CLI
+namespace drewCo.CLI.Tools
 {
   // ==============================================================================================================================
   internal class Program
