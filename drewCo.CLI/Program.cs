@@ -35,7 +35,7 @@ namespace drewCo.CLI
       }
 
       var generator = new DefGenerator();
-      var def = generator.ParseCommandDefsFromTOML(g.Path);
+      var def = generator.ParseCommandDefsFromTOML(g.Path).Single();
       var cg = new CodeGen();
 
       switch (g.TargetLanguage)

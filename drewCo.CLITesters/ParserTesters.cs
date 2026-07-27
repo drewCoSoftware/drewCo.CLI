@@ -6,7 +6,7 @@ namespace drewCo.CLITesters
 {
 
   // ==============================================================================================================================
-  public class Tests
+  public class ParserTesters
   {
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
@@ -15,7 +15,9 @@ namespace drewCo.CLITesters
     [Test]
     public void CanGenerateMultipleDefsFromSingleInput()
     {
-      Assert.Fail("Please finish this test!");
+      var defs = ParseAllDefsFromFile("MultiDefs.toml");
+      Assert.That(defs.Length, Is.EqualTo(2), "There should be two defs in the file!");
+
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
@@ -232,13 +234,21 @@ namespace drewCo.CLITesters
       Assert.IsFalse(lastOp.IsRequired, $"The option for {lastOp.Name} shoul not be required!");
     }
 
+    // --------------------------------------------------------------------------------------------------------------------------
+    private static CommandDef[] ParseAllDefsFromFile(string fileName)
+    {
+      string path = Path.Combine("test-data", fileName);
+      var generator = new DefGenerator();
+      var res = generator.ParseCommandDefsFromTOML(path);
+      return res;
+    }
 
     // --------------------------------------------------------------------------------------------------------------------------
     private static CommandDef ParseDefFromFile(string fileName)
     {
       string path = Path.Combine("test-data", fileName);
       var generator = new DefGenerator();
-      var res = generator.ParseCommandDefsFromTOML(path);
+      var res = generator.ParseCommandDefsFromTOML(path).Single();
       return res;
     }
   }

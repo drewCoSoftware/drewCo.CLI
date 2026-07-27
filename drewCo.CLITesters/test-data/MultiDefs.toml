@@ -1,0 +1,7 @@
+[CommandDef1]
+Name = "Default1"
+Number = 123
+
+[CommandDef2]
+Name = "Default2"
+Number = 456
