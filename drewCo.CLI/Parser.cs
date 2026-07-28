@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.Design;
+using System.Reflection;
 using System.Security.Cryptography;
 using Tommy;
 
@@ -52,23 +53,25 @@ namespace drewCo.CLI
     // TODO: Shared location or otherwise.....
     private void PrintVersion()
     {
-      var asm = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-      var asmName = asm.GetName();
-
       HelpWriter.Init();
-      HelpWriter.WriteMessage(asmName.Name + " " + asmName.Version.ToString());
+      HelpWriter.WriteVersion();
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
     private void PrintHelp(string? useCommand = null)
     {
       HelpWriter.Init();
-      HelpWriter.WriteMessage("TODO: Program version");
-      HelpWriter.WriteMessage("TODO: Copyright data");
+      HelpWriter.WriteNameAndversion();
+
+      // TODO: Write copyright and other info, or is this a config setting?
+      // HelpWriter.WriteMessage("TODO: Copyright data");
       HelpWriter.WriteMessage();
 
-
       HelpWriter.SetIndent(2);
+
+
+      var toWrite = new List<(string,string)>();
+
 
       if (useCommand != null)
       {
@@ -77,28 +80,38 @@ namespace drewCo.CLI
 
         foreach (var item in match.Def.Options)
         {
-          HelpWriter.WriteMessage(item.Name, item.HelpText);
-          HelpWriter.WriteMessage();
+          toWrite.Add((item.Name, item.HelpText));
         }
+        toWrite.Add((HELP_COMMAND, "Display this help message."));
       }
       else
       {
         // Display help for all commands...
         foreach (var item in AllCommands.Values)
         {
-          HelpWriter.WriteMessage(item.Def.Name, item.Def.HelpText);
-          HelpWriter.WriteMessage();
+          toWrite.Add((item.Def.Name, item.Def.HelpText));
         }
-        HelpWriter.WriteMessage(HELP_COMMAND, "Display help information for a specific command.");
-        HelpWriter.WriteMessage();
-        HelpWriter.WriteMessage(VERSION_COMMAND, "Display version information.");
+          toWrite.Add((HELP_COMMAND, "Display help information for a specific command."));
+        toWrite.Add((VERSION_COMMAND, "Display version information."));
+      }
+
+      // Max col1 width for prettiest printing.
+      const int INDENT_SIZE = 2;
+      HelpWriter.SetIndent(INDENT_SIZE);
+
+      int maxWidth = HelpWriter.Col1Width;
+      foreach (var item in toWrite)
+      {
+        maxWidth = Math.Max(item.Item1.Length + INDENT_SIZE, maxWidth);
+      }
+      HelpWriter.SetCol1Size(maxWidth);
+
+      foreach (var item in toWrite)
+      {
+        HelpWriter.WriteMessage(item.Item1, item.Item2);
         HelpWriter.WriteMessage();
       }
 
-
-
-
-      HelpWriter.SetIndent(0);
     }
 
     // --------------------------------------------------------------------------------------------------------------------------

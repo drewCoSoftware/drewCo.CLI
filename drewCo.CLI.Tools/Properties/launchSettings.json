@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "drewCo.CLI.Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}
