@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Design;
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Reflection;
 using System.Security.Cryptography;
 using Tommy;
@@ -190,12 +191,21 @@ namespace drewCo.CLI
       if (!AllCommands.TryGetValue(useCommand, out var entry))
       {
         // TODO: Maybe some different text here depending on if we used a file or not....
+        // TODO: We need to make note of the errors so that they can be written in the proper order (after the program info, mostly)
         Console.WriteLine($"Unknown command: {args[0]}!");
         PrintHelp();
         return ErrorCode;
       }
 
-      printHelp = ParseOptionValues(args, printHelp, table, entry);
+      var parseErrors = ParseOptionValues(args, table, entry);
+      if (parseErrors.Count > 0)  {
+        foreach (var item in parseErrors)
+        {
+          Console.WriteLine(item);
+        }
+        PrintHelp();
+        return ErrorCode;
+      }
 
       // Now we have a known command, a table, and a def.
       // Let's create an instance of the data + validate it:
@@ -204,8 +214,6 @@ namespace drewCo.CLI
       if (vr.Errors.Count > 0)
       {
         Console.WriteLine("There are validation errors!");
-        //Console.WriteLine("Print errors!");
-        //Console.WriteLine("Print help for this command!");
         foreach (var item in vr.Errors)
         {
           Console.WriteLine(item.Message);
@@ -228,15 +236,16 @@ namespace drewCo.CLI
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    private bool ParseOptionValues(string[] args, bool printHelp, TomlTable table, DefEntry entry)
+    private List<string> ParseOptionValues(string[] args, TomlTable table, DefEntry entry)
     {
+      var errors = new List<string>();
+
       if (args.Length > 1)
       {
         // Options + values are paired off.
         // Boolean options can work like a flag, and defaults to 'true' if no argument is given (can be true/false)
         int max = args.Length;
 
-        var errors = new List<string>();
 
         var optionsAndValues = new List<(CommandOption, string)>();
 
@@ -246,7 +255,6 @@ namespace drewCo.CLI
           string nextArg = args[i];
           if (nextArg == HELP_COMMAND)
           {
-            printHelp = true;
             continue;
           }
 
@@ -318,12 +326,15 @@ namespace drewCo.CLI
         for (int i = 0; i < len; i++)
         {
           var item = optionsAndValues[i];
-          table.AddIfMissing(item.Item1.Name, item.Item1.DataType);
-          table.SetValue(item.Item1.Name, item.Item2);
+          if (item.Item1.IsValid)
+          {
+            table.AddIfMissing(item.Item1.Name, item.Item1.DataType);
+            table.SetValue(item.Item1.Name, item.Item2);
+          }
         }
       }
 
-      return printHelp;
+      return errors;
     }
 
     // --------------------------------------------------------------------------------------------------------------------------

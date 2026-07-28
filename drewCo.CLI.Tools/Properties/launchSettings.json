@@ -2,7 +2,7 @@
   "profiles": {
     "drewCo.CLI.Tools": {
       "commandName": "Project",
-      "commandLineArgs": "--help"
+      "commandLineArgs": "generate --path ReplayCommands\\defs.toml --lang csharp --o \"my-ouput.cs\""
     }
   }
 }

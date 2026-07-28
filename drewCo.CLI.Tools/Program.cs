@@ -26,7 +26,7 @@ namespace drewCo.CLI.Tools
 
 
     // ------------------------------------------------------------------------------------------
-    private static int GenerateCode(object args)
+    public static int GenerateCode(object args)
     {
       var g = args as Generate;
       if (g == null)

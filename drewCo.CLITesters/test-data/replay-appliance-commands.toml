@@ -1,0 +1,19 @@
+# These are all commands that were converted from the project "ReplayAppliance"
+
+# @ALIAS session-request
+[SessionRequest]
+
+# Host address to make the request on.
+Host = "localhost"
+
+#(TCP) Port to listen on for session start requests.
+Port = 5000
+
+# Request timeout in milliseconds
+Timeout = 5000
+
+MaxPlayerCount = 2
+TotalInputSize = 10
+GameName = "sfiii3nr1"
+GameVersion = "0.5a"
+PlayerNames = "Echoman, Screwie"

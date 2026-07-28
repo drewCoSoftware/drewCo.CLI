@@ -8,6 +8,41 @@ namespace drewCo.CLITesters
   // ==============================================================================================================================
   public class ParserTesters
   {
+
+
+    // ----------------------------------------------------------------------    
+    /// <summary>
+    /// This is another test case that was added when I started dogfooding this project into other
+    /// application that I am working on.  This is the most convenient way to test it all out and
+    /// get it stable and stuff....
+    /// </summary>
+    [Test]
+    public void CanGenerateOtherCommands()
+    {
+      var def = ParseDefFromFile("replay-appliance-commands.toml");
+
+      const string OUTPUT_PATH = "replay-appliance-commands.cs";
+      var cg = new CodeGen();
+      cg.OutputCSharp(def, OUTPUT_PATH, "funscrew");
+
+      // NOTE: I am pasting the output directly into a different project, so nothing
+      // to check here....
+      // Assert.That(def.Options.Count, Is.EqualTo(3), "There should be three commands on this def.");
+
+      //var targetOp = def.Options[1];
+      //Assert.IsNotNull(targetOp.HelpText, "There should be some help text!");
+      //Assert.That(targetOp.Name, Is.EqualTo("TargetLanguage"));
+      //Assert.IsNotNull(targetOp.Options);
+      //Assert.That(targetOp.Options.Length, Is.EqualTo(3));
+
+      //Assert.IsNotNull(targetOp.DefaultValue, "There should be a default value!");
+      //Assert.That(targetOp.DefaultValue, Is.EqualTo("csharp"));
+
+      //var lastOp = def.Options[2]!;
+      //Assert.IsFalse(lastOp.IsRequired, $"The option for {lastOp.Name} shoul not be required!");
+    }
+
+
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Shows that multiple defs can be generated / contained in a single TOML file.

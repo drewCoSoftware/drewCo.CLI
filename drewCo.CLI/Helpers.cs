@@ -87,6 +87,7 @@ namespace drewCo.CLI
               else { otherCount++; }
             }
 
+            // NOTE: otherCount == 1 SHOULD be valid for the command names!
             if (shortCount > 1 || longCount > 1 || otherCount > 0) {
               throw new InvalidOperationException("Invalid alias specification!");
             }
