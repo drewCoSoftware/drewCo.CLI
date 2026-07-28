@@ -3,12 +3,15 @@
 
 # Path to input TOML file.
 # @REQUIRED
+# @ALIAS --path
 Path = "input.toml"
 
 # The target output language.
 # @REQUIRED
 # @OPTIONS csharp,python,cpp
+# @ALIAS --lang
 TargetLanguage = "csharp"
 
 # The path where the output file will go.
+# @ALIAS --output, -o
 OutputPath = "."

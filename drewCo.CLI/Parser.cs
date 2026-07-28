@@ -70,7 +70,7 @@ namespace drewCo.CLI
       HelpWriter.SetIndent(2);
 
 
-      var toWrite = new List<(string,string)>();
+      var toWrite = new List<(string, string)>();
 
 
       if (useCommand != null)
@@ -80,7 +80,7 @@ namespace drewCo.CLI
 
         foreach (var item in match.Def.Options)
         {
-          toWrite.Add((item.Name, item.HelpText));
+          toWrite.Add((GetCLIName(item), item.HelpText));
         }
         toWrite.Add((HELP_COMMAND, "Display this help message."));
       }
@@ -89,9 +89,9 @@ namespace drewCo.CLI
         // Display help for all commands...
         foreach (var item in AllCommands.Values)
         {
-          toWrite.Add((item.Def.Name, item.Def.HelpText));
+          toWrite.Add((GetCLIName(item.Def), item.Def.HelpText));
         }
-          toWrite.Add((HELP_COMMAND, "Display help information for a specific command."));
+        toWrite.Add((HELP_COMMAND, "Display help information for a specific command."));
         toWrite.Add((VERSION_COMMAND, "Display version information."));
       }
 
@@ -111,6 +111,37 @@ namespace drewCo.CLI
         HelpWriter.WriteMessage(item.Item1, item.Item2);
         HelpWriter.WriteMessage();
       }
+
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    private string GetCLIName(CommandDef def)
+    {
+      string res = def.Name.ToLower();
+      return res;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Get the name / aliases for the command option.
+    /// </summary>
+    private string GetCLIName(CommandOption option)
+    {
+      // OPTIONS:
+      const bool INCLUDE_NON_ALIAS = false;
+
+      string res = "--" + option.Name;
+      if (option.Aliases != null)
+      {
+        res = string.Join(", ", option.Aliases);
+
+        if (INCLUDE_NON_ALIAS)
+        {
+          res += $"(--{option.Name})";
+        }
+      }
+
+      return res;
 
     }
 

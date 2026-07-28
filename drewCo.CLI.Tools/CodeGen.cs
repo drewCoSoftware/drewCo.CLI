@@ -140,6 +140,10 @@ namespace drewCo.CLI
         file.WriteLine($"{opName}.DataType = typeof({op.DataType});");
         file.WriteLine($"{opName}.IsRequired = {(op.IsRequired ? "true" : "false")};");
 
+        if (op.Aliases != null) { 
+          file.WriteLine($"{opName}.Aliases = new[] {{ {string.Join(", ", from x in op.Aliases select "\"" + x + "\"")} }};");
+        }
+
         string useOpsVal = "null";
         if (op.Options != null)
         {
