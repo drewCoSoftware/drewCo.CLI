@@ -1,6 +1,7 @@
 ﻿using dhll.CodeGen;
 using drewCo.Tools;
 using drewCo.Tools.Logging;
+using System.Text;
 
 namespace drewCo.CLI
 {
@@ -10,7 +11,7 @@ namespace drewCo.CLI
   {
 
     // --------------------------------------------------------------------------------
-    public void OutputCSharp(CommandDef fromDef, string toPath, string? useNamespace = null)
+    public void OutputCSharp(CommandDef fromDef, Stream toStream,  string? useNamespace = null)
     {
       var file = new CodeFile();
 
@@ -98,9 +99,15 @@ namespace drewCo.CLI
 
       file.CloseBlock(1);
 
-      file.Save(toPath);
+      string output = file.ToString();
+      var bytes = Encoding.UTF8.GetBytes(output + Environment.NewLine);
 
-      Log.Info($"Wrote C# code to file: {toPath}");
+
+      toStream.Write(bytes, 0, bytes.Length);
+
+      //file.Save(toPath);
+
+      //Log.Info($"Wrote C# code to file: {toPath}");
     }
 
     // --------------------------------------------------------------------------------
@@ -219,6 +226,10 @@ namespace drewCo.CLI
       else if (fromType == typeof(long))
       {
         return "GetLong";
+      }
+      else if (fromType == typeof(bool))
+      {
+        return "GetBool";
       }
       // Other cases here.....
       else

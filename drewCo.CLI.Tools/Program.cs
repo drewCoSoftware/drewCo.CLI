@@ -35,26 +35,36 @@ namespace drewCo.CLI.Tools
       }
 
       var generator = new DefGenerator();
-      var def = generator.ParseCommandDefsFromTOML(g.Path).Single();
+      var defs = generator.ParseCommandDefsFromTOML(g.Path);
       var cg = new CodeGen();
 
-      switch (g.TargetLanguage)
+      using (var fs = File.OpenWrite(g.OutputPath))
       {
-        case "csharp":
-          string outDir = Path.GetDirectoryName(g.Path);
-          FileTools.CreateDirectory(outDir);
 
-          cg.OutputCSharp(def, g.OutputPath);
 
-          Log.Info($"Code file was saved to: {g.OutputPath}");
+        foreach (var def in defs)
+        {
+          switch (g.TargetLanguage)
+          {
+            case "csharp":
+              string outDir = Path.GetDirectoryName(g.Path);
+              FileTools.CreateDirectory(outDir);
 
-          break;
+              cg.OutputCSharp(def, fs);
 
-        default:
-          // NOTE: This condition should come up during command validation!
-          throw new InvalidOperationException($"Unsupported target language: {g.TargetLanguage}");
+              // Add a newline....
+              fs.Write(new byte[] { 10, 13 });
+
+              break;
+
+            default:
+              // NOTE: This condition should come up during command validation!
+              throw new InvalidOperationException($"Unsupported target language: {g.TargetLanguage}");
+          }
+        }
+
+        Log.Info($"Code file was saved to: {g.OutputPath}");
       }
-
 
       return 0;
     }

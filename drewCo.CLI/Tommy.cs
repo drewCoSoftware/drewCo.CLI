@@ -72,6 +72,16 @@ namespace Tommy
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// Convenience functions to overcome tedious API.
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public bool GetBool(string key, bool fallback = false)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsBoolean) { return fallback; }
+      return res.AsBoolean.Value;
+    }
+
     // --------------------------------------------------------------------------------------------------------------------------
     public string? GetString(string key, string? fallback = null)
     {
