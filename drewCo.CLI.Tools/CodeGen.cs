@@ -129,6 +129,9 @@ namespace drewCo.CLI
 
       file.WriteLine($"var res = new CommandDef();");
       file.WriteLine($"res.Name = \"{def.Name}\";");
+      if (def.Alias != null) {
+        file.WriteLine($"res.Alias = \"{def.Alias}\"");
+      }
       file.WriteLine($"res.HelpText = \"{def.HelpText}\";");
       foreach (var op in def.Options)
       {

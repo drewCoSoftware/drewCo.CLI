@@ -34,8 +34,6 @@ public class DefGenerator
 
       foreach (var k in allKeys)
       {
-
-
         var t = table[k];
         if (!t.IsTable)
         {
@@ -47,11 +45,12 @@ public class DefGenerator
         Log.Info($"The help text is: {comment ?? "<null>"}");
 
         // NOTE: Command defs don't use constraints:
-        var txtc1 = Helpers.ParseTOMLComment(t.Comment);
+        var txtc1 = Helpers.ParseTOMLComment(t.Comment, true);
         var def = new CommandDef()
         {
           Name = k,
           HelpText = txtc1.Text,
+          Alias = txtc1.Constraints.Aliases?.FirstOrDefault()
         };
 
         // Each of the children will then be their own property (option) on the def:
@@ -59,7 +58,7 @@ public class DefGenerator
         foreach (var ck in cKeys)
         {
           TomlNode child = t[ck];
-          var txtc2 = Helpers.ParseTOMLComment(child.Comment);
+          var txtc2 = Helpers.ParseTOMLComment(child.Comment, false);
 
           var op = new CommandOption();
           op.Name = ck;

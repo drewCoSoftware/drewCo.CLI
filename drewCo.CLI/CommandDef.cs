@@ -10,6 +10,7 @@ public class CommandDef
 {
   public string Name { get; set; }
   public string HelpText { get; set; }
+  public string? Alias { get; set; } = null;
 
   // Computed:
   public List<CommandOption> Options { get; set; } = new List<CommandOption>();

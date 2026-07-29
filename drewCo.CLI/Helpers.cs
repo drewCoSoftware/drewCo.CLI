@@ -47,7 +47,7 @@ namespace drewCo.CLI
     /// The constraints are embedded into the TOML comments, starting
     /// on each new line, and they will be stripped out of the overall comment...
     /// </summary>
-    internal static (string Text, Constraints Constraints) ParseTOMLComment(string input)
+    internal static (string Text, Constraints Constraints) ParseTOMLComment(string input, bool isCommandDef)
     {
 
       Constraints c = new Constraints();
@@ -88,8 +88,19 @@ namespace drewCo.CLI
             }
 
             // NOTE: otherCount == 1 SHOULD be valid for the command names!
-            if (shortCount > 1 || longCount > 1 || otherCount > 0) {
-              throw new InvalidOperationException("Invalid alias specification!");
+            if (isCommandDef)
+            {
+              if (shortCount > 0 || longCount > 0 || otherCount < 1)
+              {
+                throw new InvalidOperationException("Invalid alias specification for command def!");
+              }
+            }
+            else
+            {
+              if (shortCount > 1 || longCount > 1 || otherCount > 0)
+              {
+                throw new InvalidOperationException("Invalid alias specification for command option!");
+              }
             }
 
 
