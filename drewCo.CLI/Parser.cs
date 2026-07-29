@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Reflection;
+﻿using drewCo.CLI;
+using System.Net.WebSockets;
 using System.Security.Cryptography;
 using Tommy;
 
@@ -27,12 +26,15 @@ namespace drewCo.CLI
     /// </summary>
     public int ErrorCode { get; private set; } = DEFAULT_ERROR_CODE;
 
+    // NOTE: HelpWriter and the list of messages might end up being merged into a single interface at some point....
     private HelpWriter HelpWriter = new HelpWriter();
+    private List<string> Messages = new List<string>();
 
     // --------------------------------------------------------------------------------------------------------------------------
     public Parser(int errCode_ = DEFAULT_ERROR_CODE)
     {
       ErrorCode = errCode_;
+      Messages = new List<string>();
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
@@ -58,11 +60,34 @@ namespace drewCo.CLI
       HelpWriter.WriteVersion();
     }
 
+
     // --------------------------------------------------------------------------------------------------------------------------
-    private void PrintHelp(string? useCommand = null)
+    private void AddMessage(string message)
     {
+      Messages.Add(message);
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    private void PrintHelpAndMessages(string? helpCommand, OptionsParseResult? parseResult)
+    {
+
+      if (parseResult != null)
+      {
+        foreach (var item in parseResult.Errors)
+        {
+          AddMessage(item);
+        }
+      }
+
+
       HelpWriter.Init();
       HelpWriter.WriteNameAndversion();
+      HelpWriter.WriteMessage();
+
+      foreach (var m in Messages)
+      {
+        HelpWriter.WriteMessage(m);
+      }
 
       // TODO: Write copyright and other info, or is this a config setting?
       // HelpWriter.WriteMessage("TODO: Copyright data");
@@ -74,13 +99,15 @@ namespace drewCo.CLI
       var toWrite = new List<(string, string)>();
 
 
-      if (useCommand != null)
+      if (helpCommand != null)
       {
         // Display the help for this specific command.
-        var match = AllCommands[useCommand];
+        var match = AllCommands[helpCommand];
 
         foreach (var item in match.Def.Options)
         {
+          if (parseResult?.HasValidOption(item) ?? true) { continue; }
+
           toWrite.Add((GetCLIName(item), item.HelpText));
         }
         toWrite.Add((HELP_COMMAND, "Display this help message."));
@@ -116,17 +143,19 @@ namespace drewCo.CLI
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    private string GetCLIName(CommandDef def)
+    // SHARE:
+    public static string GetCLIName(CommandDef def)
     {
       string res = def.Name.ToLower();
       return res;
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
+    // SHARE:
     /// <summary>
     /// Get the name / aliases for the command option.
     /// </summary>
-    private string GetCLIName(CommandOption option)
+    public static string GetCLIName(CommandOption option)
     {
       // OPTIONS:
       const bool INCLUDE_NON_ALIAS = false;
@@ -154,7 +183,7 @@ namespace drewCo.CLI
       if (args.Length == 0 || args[0] == HELP_COMMAND)
       {
         // Print Help.
-        PrintHelp();
+        PrintHelpAndMessages(null, null);
         return ErrorCode;
       }
 
@@ -192,18 +221,15 @@ namespace drewCo.CLI
       {
         // TODO: Maybe some different text here depending on if we used a file or not....
         // TODO: We need to make note of the errors so that they can be written in the proper order (after the program info, mostly)
-        Console.WriteLine($"Unknown command: {args[0]}!");
-        PrintHelp();
+        AddMessage($"Unknown command: {args[0]}!");
+        PrintHelpAndMessages(null, null);
         return ErrorCode;
       }
 
-      var parseErrors = ParseOptionValues(args, table, entry);
-      if (parseErrors.Count > 0)  {
-        foreach (var item in parseErrors)
-        {
-          Console.WriteLine(item);
-        }
-        PrintHelp();
+      var parseResult = ParseOptionValues(args, table, entry);
+      if (parseResult.Errors.Count > 0)
+      {
+        PrintHelpAndMessages(useCommand, parseResult);
         return ErrorCode;
       }
 
@@ -213,17 +239,17 @@ namespace drewCo.CLI
       var vr = cmd.Validate();
       if (vr.Errors.Count > 0)
       {
-        Console.WriteLine("There are validation errors!");
+        AddMessage("There are validation errors!");
         foreach (var item in vr.Errors)
         {
-          Console.WriteLine(item.Message);
+          AddMessage(item.Message);
         }
         printHelp = true;
       }
 
       if (printHelp)
       {
-        PrintHelp(useCommand);
+        PrintHelpAndMessages(useCommand, null);
         return ErrorCode;
       }
 
@@ -235,10 +261,11 @@ namespace drewCo.CLI
 
     }
 
+
     // --------------------------------------------------------------------------------------------------------------------------
-    private List<string> ParseOptionValues(string[] args, TomlTable table, DefEntry entry)
+    private OptionsParseResult ParseOptionValues(string[] args, TomlTable table, DefEntry entry)
     {
-      var errors = new List<string>();
+      var res = new OptionsParseResult();
 
       if (args.Length > 1)
       {
@@ -246,8 +273,6 @@ namespace drewCo.CLI
         // Boolean options can work like a flag, and defaults to 'true' if no argument is given (can be true/false)
         int max = args.Length;
 
-
-        var optionsAndValues = new List<(CommandOption, string)>();
 
         for (int i = 1; i < max; i++)
         {
@@ -263,7 +288,7 @@ namespace drewCo.CLI
 
           if (op == null)
           {
-            errors.Add($"Invalid argument: {nextArg}!");
+            res.Errors.Add($"Invalid argument: {nextArg}!");
 
             // We have to check if the next one is a value?
             string? peekedArg = PeekNext(args, i + 1);
@@ -274,7 +299,7 @@ namespace drewCo.CLI
               if (nextOp == null)
               {
                 // OK, it isn't an option, so it must be a value.
-                optionsAndValues.Add((new CommandOption()
+                res.OptionsAndValues.Add((new CommandOption()
                 {
                   Name = nextArg,
                   IsValid = false,
@@ -298,7 +323,7 @@ namespace drewCo.CLI
               if (nextOp == null)
               {
                 // We have a value!
-                optionsAndValues.Add((op, peekedVal));
+                res.OptionsAndValues.Add((op, peekedVal));
                 i++;
               }
               else
@@ -307,11 +332,11 @@ namespace drewCo.CLI
                 // We should have a value unless this is a boolean flag.
                 if (op.DataType == typeof(bool))
                 {
-                  optionsAndValues.Add((op, "true"));
+                  res.OptionsAndValues.Add((op, "true"));
                 }
                 else
                 {
-                  errors.Add($"There is no value for option: '{nextArg}'!");
+                  res.Errors.Add($"There is no value for option: '{nextArg}'!");
                 }
               }
             }
@@ -322,10 +347,10 @@ namespace drewCo.CLI
 
         // Here we will have collected all of the parameters + their values.
         // We will set those values on the table:
-        int len = optionsAndValues.Count;
+        int len = res.OptionsAndValues.Count;
         for (int i = 0; i < len; i++)
         {
-          var item = optionsAndValues[i];
+          var item = res.OptionsAndValues[i];
           if (item.Item1.IsValid)
           {
             table.AddIfMissing(item.Item1.Name, item.Item1.DataType);
@@ -334,7 +359,7 @@ namespace drewCo.CLI
         }
       }
 
-      return errors;
+      return res;
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
@@ -351,4 +376,22 @@ namespace drewCo.CLI
 
 
 
+}
+
+// ==============================================================================================================================
+internal class OptionsParseResult
+{
+  public List<string> Errors { get; set; } = new List<string>();
+  public List<(CommandOption, string)> OptionsAndValues { get; set; } = new List<(CommandOption, string)>();
+
+  // --------------------------------------------------------------------------------------------------------------------------
+  internal bool HasValidOption(CommandOption item)
+  {
+    var match = (from x in OptionsAndValues where x.Item1.Name == item.Name select x.Item1).SingleOrDefault();
+    if (match != null)
+    {
+      return match.IsValid;
+    }
+    return false;
+  }
 }

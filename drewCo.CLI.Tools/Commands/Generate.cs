@@ -25,11 +25,11 @@ public class Generate : ICommand
     var res = new CommandValidationResult();
     if (string.IsNullOrWhiteSpace(Path))
     {
-      res.AddError("Option: 'Path' is required!");
+      res.AddError("Option: 'Path' (--path) is required!");
     }
     if (string.IsNullOrWhiteSpace(TargetLanguage))
     {
-      res.AddError("Option: 'TargetLanguage' is required!");
+      res.AddError("Option: 'TargetLanguage' (--lang) is required!");
     }
     return res;
   }

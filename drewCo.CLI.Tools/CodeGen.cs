@@ -178,7 +178,7 @@ namespace drewCo.CLI
             file.WriteLine($"if (string.IsNullOrWhiteSpace({item.Name}))");
             file.OpenBlock(true);
 
-            file.WriteLine($"res.AddError(\"Option: '{item.Name}' is required!\");");
+            file.WriteLine($"res.AddError(\"Option: '{item.Name}' ({Parser.GetCLIName(item)}) is required!\");");
 
             file.CloseBlock(1);
           }
