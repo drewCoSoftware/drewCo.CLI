@@ -52,9 +52,6 @@ namespace drewCo.CLI.Tools
 
               cg.OutputCSharp(def, fs);
 
-              // Add a newline....
-              fs.Write(new byte[] { 10, 13 });
-
               break;
 
             default:
