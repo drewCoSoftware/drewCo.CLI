@@ -5,3 +5,4 @@ obj/
 .vscode/
 .github/
 nuget-build/
+*.nupkg

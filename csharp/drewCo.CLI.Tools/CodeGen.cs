@@ -9,20 +9,37 @@ namespace drewCo.CLI
   // ==================================================================================================
   public class CodeGen
   {
+    // --------------------------------------------------------------------------------
+    public void OutputCSharp(CommandDef def, string toPath, string? useNamespace = null)
+    {
+      OutputCSharp(new[] { def }, toPath, useNamespace);
+    }
 
     // --------------------------------------------------------------------------------
-    public void OutputCSharp(CommandDef fromDef, string toPath, string? useNamespace = null)
+    public void OutputCSharp(IList<CommandDef> fromDefs, string toPath, string? useNamespace = null)
     {
-      using (var fs = File.Open(toPath, FileMode.OpenOrCreate))
+      var file = new CodeFile();
+
+      file.WriteLine("// GENERATED CODE!  DO NOT EDIT BY HAND!");
+      file.WriteLine("using Tommy;");
+      file.WriteLine("using drewCo.CLI;");
+
+      using (var fs = File.Open(toPath, FileMode.Truncate))
       {
-        OutputCSharp(fromDef, fs, useNamespace);
+        foreach (var def in fromDefs)
+        {
+          OutputCSharp(def, file, useNamespace);
+        }
+
+        string output = file.ToString();
+        var bytes = Encoding.UTF8.GetBytes(output + Environment.NewLine);
+        fs.Write(bytes, 0, bytes.Length);
       }
     }
 
     // --------------------------------------------------------------------------------
-    public void OutputCSharp(CommandDef fromDef, Stream toStream, string? useNamespace = null)
+    public void OutputCSharp(CommandDef fromDef, CodeFile file, string? useNamespace = null)
     {
-      var file = new CodeFile();
 
       string nameProp = $"Name = \"{fromDef.Name}\"";
       var allProps = nameProp;
@@ -31,8 +48,6 @@ namespace drewCo.CLI
         allProps += $", HelpText = \"{fromDef.HelpText}\"";
       }
 
-      file.WriteLine("// GENERATED CODE!  DO NOT EDIT BY HAND!");
-      file.WriteLine("using Tommy;");
       file.NextLine();
 
       if (!string.IsNullOrWhiteSpace(useNamespace))
@@ -57,7 +72,11 @@ namespace drewCo.CLI
 
         if (op.DataType == typeof(string))
         {
-          if (val == string.Empty) { val = "\"\""; } else if (val == null) { val = "null"; }
+          if (val == string.Empty) { val = "string.Empty"; } else if (val == null) { val = "null"; }
+        }
+        if (op.DataType == typeof(bool))
+        {
+          val = val.ToLower();
         }
 
         string opProps = $"Name = {op.Name}";
@@ -69,7 +88,7 @@ namespace drewCo.CLI
         {
           opProps += $", HelpText = {op.HelpText}";
         }
-        //file.WriteLine($"[CommandOption({opProps})]");
+
         if (op.DataType == typeof(string))
         {
           val = $"\"{val}\"";
@@ -96,6 +115,11 @@ namespace drewCo.CLI
         {
           useArgs += ", " + GetDefaultValuesString(item);
         }
+        if (item.DataType == typeof(bool))
+        {
+          useArgs = useArgs.ToLower();
+        }
+
         string getValueCall = $"{GetValueByType(item.DataType)}({useArgs})";
         file.WriteLine($"res.{item.Name} = table.{getValueCall};");
       }
@@ -108,15 +132,6 @@ namespace drewCo.CLI
 
       file.CloseBlock(1);
 
-      string output = file.ToString();
-      var bytes = Encoding.UTF8.GetBytes(output + Environment.NewLine);
-
-
-      toStream.Write(bytes, 0, bytes.Length);
-
-      //file.Save(toPath);
-
-      //Log.Info($"Wrote C# code to file: {toPath}");
     }
 
     // --------------------------------------------------------------------------------
@@ -147,7 +162,7 @@ namespace drewCo.CLI
       file.WriteLine($"res.Name = \"{def.Name}\";");
       if (def.Alias != null)
       {
-        file.WriteLine($"res.Alias = \"{def.Alias}\"");
+        file.WriteLine($"res.Alias = \"{def.Alias}\";");
       }
       file.WriteLine($"res.HelpText = \"{def.HelpText}\";");
       foreach (var op in def.Options)
@@ -232,7 +247,7 @@ namespace drewCo.CLI
       }
       else if (fromType == typeof(int))
       {
-        return "GetInteger";
+        return "GetInt";
       }
       else if (fromType == typeof(long))
       {

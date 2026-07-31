@@ -92,14 +92,14 @@ namespace drewCo.CLI
             {
               if (shortCount > 0 || longCount > 0 || otherCount < 1)
               {
-                throw new InvalidOperationException("Invalid alias specification for command def!");
+                throw new InvalidOperationException($"Invalid alias specification: '{string.Join(", ", c.Aliases)}' for command def!  Use the form: <alias>");
               }
             }
             else
             {
               if (shortCount > 1 || longCount > 1 || otherCount > 0)
               {
-                throw new InvalidOperationException("Invalid alias specification for command option!");
+                throw new InvalidOperationException($"Invalid alias specification: '{string.Join(", ", c.Aliases)}' for command option!  Use the form --<alias> | --<alias>, -<a>");
               }
             }
 

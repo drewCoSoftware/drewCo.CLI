@@ -130,7 +130,7 @@ namespace drewCo.CLITesters
         const string TEST_LANG = "cpp";
 
         cmdExecuted = false;
-        var args = new[] { "generate", "--Path", TEST_PATH, "--TargetLanguage", TEST_LANG };
+        var args = new[] { "generate", "--Path", TEST_PATH, "--TargetLanguage", TEST_LANG, "-o", "my-file.cs" };
         int cliRes = cli.ParseCommandLine(args);
 
         Assert.That(cliRes, Is.EqualTo(0), "This command should have run!");
@@ -234,8 +234,8 @@ namespace drewCo.CLITesters
       var cg = new CodeGen();
       cg.OutputCSharp(def, OUTPUT_PATH, "drewCo.CLI.Commands");
 
-      string data = File.ReadAllText(OUTPUT_PATH, Encoding.UTF8);
-      string refData = File.ReadAllText("..\\..\\..\\..\\drewCo.CLI.Tools\\Commands\\Generate.cs", Encoding.UTF8);
+      string data = File.ReadAllText(OUTPUT_PATH, Encoding.UTF8).Trim();
+      string refData = File.ReadAllText("..\\..\\..\\..\\drewCo.CLI.Tools\\Commands\\Generate.cs", Encoding.UTF8).Trim();
 
       // Yes, this is correct.  We expect the output of the file from this test case
       // to be used in the actual program, verbatim.
@@ -266,7 +266,7 @@ namespace drewCo.CLITesters
       Assert.That(targetOp.DefaultValue, Is.EqualTo("csharp"));
 
       var lastOp = def.Options[2]!;
-      Assert.IsFalse(lastOp.IsRequired, $"The option for {lastOp.Name} shoul not be required!");
+      Assert.IsTrue(lastOp.IsRequired, $"The option for {lastOp.Name} should be required!");
     }
 
     // --------------------------------------------------------------------------------------------------------------------------

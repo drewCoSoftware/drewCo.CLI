@@ -1,11 +1,4 @@
 ﻿using drewCo.Tools.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Tommy;
 
 namespace drewCo.CLI;
@@ -41,8 +34,6 @@ public class DefGenerator
         }
 
         string comment = t.Comment;
-
-        Log.Info($"The help text is: {comment ?? "<null>"}");
 
         // NOTE: Command defs don't use constraints:
         var txtc1 = Helpers.ParseTOMLComment(t.Comment, true);

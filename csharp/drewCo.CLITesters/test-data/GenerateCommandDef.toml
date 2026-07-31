@@ -13,5 +13,6 @@ Path = "input.toml"
 TargetLanguage = "csharp"
 
 # The path where the output file will go.
+# @REQUIRED
 # @ALIAS --output, -o
 OutputPath = "."

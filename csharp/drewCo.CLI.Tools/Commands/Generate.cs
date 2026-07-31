@@ -1,5 +1,6 @@
 ﻿// GENERATED CODE!  DO NOT EDIT BY HAND!
 using Tommy;
+using drewCo.CLI;
 
 namespace drewCo.CLI.Commands;
 
@@ -16,7 +17,7 @@ public class Generate : ICommand
     var res = new Generate();
     res.Path = table.GetString("Path");
     res.TargetLanguage = table.GetString("TargetLanguage");
-    res.OutputPath = table.GetString("OutputPath", ".");
+    res.OutputPath = table.GetString("OutputPath");
     return res;
   }
 
@@ -30,6 +31,10 @@ public class Generate : ICommand
     if (string.IsNullOrWhiteSpace(TargetLanguage))
     {
       res.AddError("Option: 'TargetLanguage' (--lang) is required!");
+    }
+    if (string.IsNullOrWhiteSpace(OutputPath))
+    {
+      res.AddError("Option: 'OutputPath' (--output, -o) is required!");
     }
     return res;
   }
@@ -62,7 +67,7 @@ public class Generate : ICommand
     outputPathOption.Name = "OutputPath";
     outputPathOption.HelpText = "The path where the output file will go.";
     outputPathOption.DataType = typeof(System.String);
-    outputPathOption.IsRequired = false;
+    outputPathOption.IsRequired = true;
     outputPathOption.Aliases = new[] { "--output", "-o" };
     outputPathOption.Options = null;
     res.Options.Add(outputPathOption);
@@ -70,3 +75,4 @@ public class Generate : ICommand
     return res;
   }
 }
+
