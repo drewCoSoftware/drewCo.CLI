@@ -11,7 +11,16 @@ namespace drewCo.CLI
   {
 
     // --------------------------------------------------------------------------------
-    public void OutputCSharp(CommandDef fromDef, Stream toStream,  string? useNamespace = null)
+    public void OutputCSharp(CommandDef fromDef, string toPath, string? useNamespace = null)
+    {
+      using (var fs = File.Open(toPath, FileMode.OpenOrCreate))
+      {
+        OutputCSharp(fromDef, fs, useNamespace);
+      }
+    }
+
+    // --------------------------------------------------------------------------------
+    public void OutputCSharp(CommandDef fromDef, Stream toStream, string? useNamespace = null)
     {
       var file = new CodeFile();
 
@@ -136,7 +145,8 @@ namespace drewCo.CLI
 
       file.WriteLine($"var res = new CommandDef();");
       file.WriteLine($"res.Name = \"{def.Name}\";");
-      if (def.Alias != null) {
+      if (def.Alias != null)
+      {
         file.WriteLine($"res.Alias = \"{def.Alias}\"");
       }
       file.WriteLine($"res.HelpText = \"{def.HelpText}\";");
@@ -150,7 +160,8 @@ namespace drewCo.CLI
         file.WriteLine($"{opName}.DataType = typeof({op.DataType});");
         file.WriteLine($"{opName}.IsRequired = {(op.IsRequired ? "true" : "false")};");
 
-        if (op.Aliases != null) { 
+        if (op.Aliases != null)
+        {
           file.WriteLine($"{opName}.Aliases = new[] {{ {string.Join(", ", from x in op.Aliases select "\"" + x + "\"")} }};");
         }
 

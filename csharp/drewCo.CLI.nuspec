@@ -1,0 +1,24 @@
+<package>
+  <metadata>
+    <id>drewCo.CLI</id>
+    <version>1.0.0.0</version>
+    <title>drewCo.CLI</title>
+    <authors>Andrew A. Ritz</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+
+    <description>Simple and convenient command line parsing.</description>
+    <copyright>2026 Andrew A. Ritz</copyright>
+
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="drewCo.Tools" version="1.5.1.1" />
+      </group>
+    </dependencies>
+
+    <repository type="git" url="https://github.com/drewCoSoftware/drewCo.CLI" branch="main" />
+
+  </metadata>
+
+
+</package>
