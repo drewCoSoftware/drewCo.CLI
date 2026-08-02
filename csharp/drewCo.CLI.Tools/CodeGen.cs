@@ -113,9 +113,15 @@ namespace drewCo.CLI
       {
         string getfuncName = GetValueByType(item.DataType);
         string useName = item.Name;
-        string defaultValueArg = GetDefaultValuesString(item);
 
-        string getValueCall = $"{getfuncName}(\"{useName}\", {defaultValueArg})";
+        string getValueCall = $"{getfuncName}(\"{useName}\"";
+        if (!item.IsRequired)
+        {
+          string defaultValueArg = GetDefaultValuesString(item);
+          getValueCall += $", {defaultValueArg}";
+        }
+        getValueCall += ")";
+
         file.WriteLine($"res.{item.Name} = table.{getValueCall};");
       }
       file.WriteLine("return res;");
@@ -136,7 +142,7 @@ namespace drewCo.CLI
       string res = t.Name;
       if (t.IsArray)
       {
-        res = ConvertTypeName(t.GetElementType()) + "[]"; 
+        res = ConvertTypeName(t.GetElementType()) + "[]";
       }
       return res;
     }

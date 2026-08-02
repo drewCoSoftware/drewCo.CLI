@@ -75,9 +75,10 @@ namespace Tommy
     // --------------------------------------------------------------------------------------------------------------------------
     public string[] GetStringArray(string key, string[]? fallback = null)
     {
-      throw new InvalidOperationException("please complete this code....");
       if (!this.HasKey(key)) { return fallback; }
       var res = this[key];
+
+      throw new InvalidOperationException("please complete this code....");
 
 
 
@@ -86,8 +87,11 @@ namespace Tommy
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    public int[] GetIntArray(string key, int[]? fallback = null) 
+    public int[] GetIntArray(string key, int[]? fallback = null)
     {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+
       throw new InvalidOperationException("please complete this code....");
     }
 
@@ -214,7 +218,18 @@ namespace Tommy
         {
           this.Add(key, new TomlFloat());
         }
-
+        else if (dataType == typeof(bool))
+        {
+          this.Add(key, new TomlBoolean());
+        }
+        else if (dataType == typeof(DateTime))
+        {
+          this.Add(key, new TomlDateTime());
+        }
+        else if (dataType == typeof(DateTimeOffset))
+        {
+          this.Add(key, new TomlDateTimeOffset());
+        }
         // TODO: Other cases go here....
 
         else

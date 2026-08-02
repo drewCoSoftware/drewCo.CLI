@@ -48,7 +48,7 @@ public class Generate : ICommand
     var pathOption = new CommandOption();
     pathOption.Name = "Path";
     pathOption.HelpText = "Path to input TOML file.";
-    pathOption.DataType = typeof(System.String);
+    pathOption.DataType = typeof(String);
     pathOption.IsRequired = true;
     pathOption.Aliases = new[] { "--path" };
     pathOption.Options = null;
@@ -57,7 +57,7 @@ public class Generate : ICommand
     var targetLanguageOption = new CommandOption();
     targetLanguageOption.Name = "TargetLanguage";
     targetLanguageOption.HelpText = "The target output language.";
-    targetLanguageOption.DataType = typeof(System.String);
+    targetLanguageOption.DataType = typeof(String);
     targetLanguageOption.IsRequired = true;
     targetLanguageOption.Aliases = new[] { "--lang" };
     targetLanguageOption.Options = new[] { "csharp", "python", "cpp" };
@@ -66,7 +66,7 @@ public class Generate : ICommand
     var outputPathOption = new CommandOption();
     outputPathOption.Name = "OutputPath";
     outputPathOption.HelpText = "The path where the output file will go.";
-    outputPathOption.DataType = typeof(System.String);
+    outputPathOption.DataType = typeof(String);
     outputPathOption.IsRequired = true;
     outputPathOption.Aliases = new[] { "--output", "-o" };
     outputPathOption.Options = null;

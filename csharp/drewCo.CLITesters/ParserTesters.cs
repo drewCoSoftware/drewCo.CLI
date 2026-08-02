@@ -13,8 +13,21 @@ namespace drewCo.CLITesters
     /// Shows that command def aliases actually do something.
     /// </summary>
     [Test]
-    public void CanUseCommandDefAlias() {
+    public void CanUseCommandDefAlias()
+    {
+      bool executed = false;
+      var p = new Parser();
+      p.Register(new ManyTypes(), ManyTypes.FromToml, (o) =>
+      {
 
+        executed = true;
+        return 0;
+      });
+
+
+      int res = p.ExectuteCommandLine(new[] { "many-types", "--IsTest", "true" });
+      Assert.IsTrue(executed, "The command should have executed!");
+      Assert.That(res, Is.EqualTo(0));
     }
 
     // --------------------------------------------------------------------------------------------------------------------------

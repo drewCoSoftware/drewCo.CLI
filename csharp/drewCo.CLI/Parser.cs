@@ -185,7 +185,9 @@ namespace drewCo.CLI
         table = new TomlTable();
       }
 
-      if (!AllCommands.TryGetValue(useCommand, out var entry))
+      DefEntry? entry = ResolveEntry(useCommand);
+
+      if (entry == null)
       {
         // TODO: Maybe some different text here depending on if we used a file or not....
         // TODO: We need to make note of the errors so that they can be written in the proper order (after the program info, mostly)
@@ -227,6 +229,20 @@ namespace drewCo.CLI
       return res;
 
 
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    private DefEntry? ResolveEntry(string useCommand)
+    {
+      foreach (var item in AllCommands.Values)
+      {
+        if (item.Def.Name.Equals(useCommand, StringComparison.OrdinalIgnoreCase) ||
+            (item.Def.Alias != null && item.Def.Alias.Equals(useCommand, StringComparison.OrdinalIgnoreCase)))
+        {
+          return item;
+        }
+      }
+      return null;
     }
 
 
