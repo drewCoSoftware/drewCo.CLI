@@ -8,6 +8,28 @@ namespace drewCo.CLITesters
   // ==============================================================================================================================
   public class ParserTesters
   {
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// This test case was provided to show that we can correctly parse out array values from a TOML file.
+    /// </summary>
+    [Test]
+    public void CanParseArrayValues()
+    {
+      bool executed = false;
+      var p = new Parser();
+      p.Register(new ManyTypes(), ManyTypes.FromToml, (o) =>
+      {
+        executed = true;
+        return 0;
+      });
+
+      // Let's pull in the def, and use it as the command line!
+      int res = p.ExectuteCommandLine(new[] { "test-data\\ManyTypesDef.toml" });
+      Assert.IsTrue(executed, "The command should have executed!");
+      Assert.That(res, Is.EqualTo(0));
+    }
+
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Shows that command def aliases actually do something.
@@ -19,6 +41,8 @@ namespace drewCo.CLITesters
       var p = new Parser();
       p.Register(new ManyTypes(), ManyTypes.FromToml, (o) =>
       {
+        var ops = (ManyTypes)o;
+        Assert.IsTrue(ops.IsTest, "The 'IsTest' flag should be set!");
 
         executed = true;
         return 0;

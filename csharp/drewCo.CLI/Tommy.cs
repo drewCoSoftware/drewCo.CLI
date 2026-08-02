@@ -76,24 +76,74 @@ namespace Tommy
     public string[] GetStringArray(string key, string[]? fallback = null)
     {
       if (!this.HasKey(key)) { return fallback; }
-      var res = this[key];
 
-      throw new InvalidOperationException("please complete this code....");
+      var node = this[key];
+      if (!node.IsArray)
+      {
+        throw new InvalidOperationException($"Node: {key} is not an array!");
+      }
 
+      int count = node.ChildrenCount;
+      var res = new string[count];
+      int index = 0;
+      foreach (var item in node.Children)
+      {
+        var nextData = item.AsString.Value;
+        res[index] = nextData;
+        ++index;
+      }
 
-
-      return new string[0];
-      // return (string[])res.AsArray.
+      return res;
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    public int[] GetIntArray(string key, int[]? fallback = null)
+    public int[]? GetIntArray(string key, int[]? fallback = null)
     {
       if (!this.HasKey(key)) { return fallback; }
-      var res = this[key];
 
-      throw new InvalidOperationException("please complete this code....");
+      var node = this[key];
+      if (!node.IsArray)
+      {
+        throw new InvalidOperationException($"Node: {key} is not an array!");
+      }
+
+      int count = node.ChildrenCount;
+      var res = new int[count];
+      int index = 0;
+      foreach (var item in node.Children)
+      {
+        var nextData = (int)item.AsInteger.Value;
+        res[index] = nextData;
+        ++index;
+      }
+
+      return res;
     }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public long[]? GetLongArray(string key, long[]? fallback = null)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+
+      var node = this[key];
+      if (!node.IsArray)
+      {
+        throw new InvalidOperationException($"Node: {key} is not an array!");
+      }
+
+      int count = node.ChildrenCount;
+      var res = new long[count];
+      int index = 0;
+      foreach (var item in node.Children)
+      {
+        var nextData = item.AsInteger.Value;
+        res[index] = nextData;
+        ++index;
+      }
+
+      return res;
+    }
+
 
     // --------------------------------------------------------------------------------------------------------------------------
     public float GetSingle(string key, float fallback = float.MinValue)
