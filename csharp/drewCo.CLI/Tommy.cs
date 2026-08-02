@@ -72,6 +72,44 @@ namespace Tommy
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// Convenience functions to overcome tedious API.
+    // --------------------------------------------------------------------------------------------------------------------------
+    public string[] GetStringArray(string key, string[]? fallback = null)
+    {
+      throw new InvalidOperationException("please complete this code....");
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+
+
+
+      return new string[0];
+      // return (string[])res.AsArray.
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public int[] GetIntArray(string key, int[]? fallback = null) 
+    {
+      throw new InvalidOperationException("please complete this code....");
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public float GetSingle(string key, float fallback = float.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsFloat) { return fallback; }
+
+      return (float)res.AsFloat.Value;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public double GetDouble(string key, double fallback = double.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsFloat) { return fallback; }
+
+      return res.AsFloat.Value;
+    }
 
     // --------------------------------------------------------------------------------------------------------------------------
     public bool GetBool(string key, bool fallback = false)

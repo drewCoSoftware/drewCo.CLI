@@ -1,6 +1,7 @@
 ﻿using dhll.CodeGen;
 using drewCo.Tools;
 using drewCo.Tools.Logging;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace drewCo.CLI
@@ -38,6 +39,16 @@ namespace drewCo.CLI
     }
 
     // --------------------------------------------------------------------------------
+    /// <summary>
+    /// Format the help text so that it is on a single line.
+    /// </summary>
+    private string FormatHelpText(string input)
+    {
+      string res = input.Replace("\r", "").Replace("\n", " ");
+      return res;
+    }
+
+    // --------------------------------------------------------------------------------
     public void OutputCSharp(CommandDef fromDef, CodeFile file, string? useNamespace = null)
     {
 
@@ -45,7 +56,7 @@ namespace drewCo.CLI
       var allProps = nameProp;
       if (!string.IsNullOrWhiteSpace(fromDef.HelpText))
       {
-        allProps += $", HelpText = \"{fromDef.HelpText}\"";
+        allProps += $", HelpText = \"{FormatHelpText(fromDef.HelpText)}\"";
       }
 
       file.NextLine();
@@ -65,19 +76,13 @@ namespace drewCo.CLI
       // command line is first processed...  Having a concrete type is a nice to have.?
       // --> Trying to decide where to draw the line.... This is all stuff that I need to think about....
 
+      // Property definitions.
       foreach (var op in fromDef.Options)
       {
-        string typeName = op.DataType.Name;
+        string typeName = ConvertTypeName(op.DataType);
         string val = op.DefaultValue;
 
-        if (op.DataType == typeof(string))
-        {
-          if (val == string.Empty) { val = "string.Empty"; } else if (val == null) { val = "null"; }
-        }
-        if (op.DataType == typeof(bool))
-        {
-          val = val.ToLower();
-        }
+        val = FormatValue(op, val);
 
         string opProps = $"Name = {op.Name}";
         if (op.IsRequired)
@@ -86,13 +91,9 @@ namespace drewCo.CLI
         }
         if (!string.IsNullOrWhiteSpace(op.HelpText))
         {
-          opProps += $", HelpText = {op.HelpText}";
+          opProps += $", HelpText = {FormatHelpText(op.HelpText)}";
         }
 
-        if (op.DataType == typeof(string))
-        {
-          val = $"\"{val}\"";
-        }
         file.WriteLine($"public {typeName} {op.Name} = {val};");
       }
 
@@ -110,17 +111,11 @@ namespace drewCo.CLI
 
       foreach (var item in fromDef.Options)
       {
-        string useArgs = $"\"{item.Name}\"";
-        if (!item.IsRequired && item.DefaultValue != null)
-        {
-          useArgs += ", " + GetDefaultValuesString(item);
-        }
-        if (item.DataType == typeof(bool))
-        {
-          useArgs = useArgs.ToLower();
-        }
+        string getfuncName = GetValueByType(item.DataType);
+        string useName = item.Name;
+        string defaultValueArg = GetDefaultValuesString(item);
 
-        string getValueCall = $"{GetValueByType(item.DataType)}({useArgs})";
+        string getValueCall = $"{getfuncName}(\"{useName}\", {defaultValueArg})";
         file.WriteLine($"res.{item.Name} = table.{getValueCall};");
       }
       file.WriteLine("return res;");
@@ -134,17 +129,67 @@ namespace drewCo.CLI
 
     }
 
-    // --------------------------------------------------------------------------------
-    private string GetDefaultValuesString(CommandOption item)
+    // --------------------------------------------------------------------------------------------------------------------------
+    private string ConvertTypeName(Type t)
     {
-      if (item.DataType == typeof(string))
+      // TODO: We can come up with better type names yet, something that is more native the C# experience.....
+      string res = t.Name;
+      if (t.IsArray)
       {
-        return $"\"{item.DefaultValue}\"";
+        res = ConvertTypeName(t.GetElementType()) + "[]"; 
       }
-      else
+      return res;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Tells us if the input string is quoted or not.
+    /// </summary>
+    [Obsolete("Replace with drewco.tools version > 1.5.1.1")]
+    public static bool IsQuoted(string input)
+    {
+      string test = input.Trim();
+      bool res = test.StartsWith("\"") && test.EndsWith("\"");
+      return res;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public static string FormatValue(CommandOption op, string val)
+    {
+      if (op.DataType == typeof(string))
       {
-        return item.DefaultValue;
+        if (val == string.Empty) { val = "string.Empty"; }
+        else if (val == null) { val = "null"; }
+        else
+        {
+          if (!IsQuoted(val))
+          {
+            val = StringTools.Quote(val);
+          }
+          return val;
+        }
       }
+      if (op.DataType == typeof(bool))
+      {
+        val = val.ToLower();
+      }
+      if (op.DataType == typeof(float))
+      {
+        val += "f";
+      }
+      if (op.DataType == typeof(double))
+      {
+        val += "d";
+      }
+
+      return val;
+    }
+
+    // --------------------------------------------------------------------------------
+    public static string GetDefaultValuesString(CommandOption op)
+    {
+      string res = FormatValue(op, op.DefaultValue);
+      return res;
     }
 
     // --------------------------------------------------------------------------------
@@ -164,15 +209,15 @@ namespace drewCo.CLI
       {
         file.WriteLine($"res.Alias = \"{def.Alias}\";");
       }
-      file.WriteLine($"res.HelpText = \"{def.HelpText}\";");
+      file.WriteLine($"res.HelpText = \"{FormatHelpText(def.HelpText)}\";");
       foreach (var op in def.Options)
       {
         file.NextLine();
         var opName = $"{StringTools.LowerFirst(op.Name)}Option";
         file.WriteLine($"var {opName} = new CommandOption();");
         file.WriteLine($"{opName}.Name = \"{op.Name}\";");
-        file.WriteLine($"{opName}.HelpText = \"{op.HelpText}\";");
-        file.WriteLine($"{opName}.DataType = typeof({op.DataType});");
+        file.WriteLine($"{opName}.HelpText = \"{FormatHelpText(op.HelpText)}\";");
+        file.WriteLine($"{opName}.DataType = typeof({ConvertTypeName(op.DataType)});");
         file.WriteLine($"{opName}.IsRequired = {(op.IsRequired ? "true" : "false")};");
 
         if (op.Aliases != null)
@@ -214,7 +259,7 @@ namespace drewCo.CLI
             file.WriteLine($"if (string.IsNullOrWhiteSpace({item.Name}))");
             file.OpenBlock(true);
 
-            file.WriteLine($"res.AddError(\"Option: '{item.Name}' ({Parser.GetCLIName(item)}) is required!\");");
+            file.WriteLine($"res.AddError(\"Option: '{item.Name}' ({item.GetCLIName()}) is required!\");");
 
             file.CloseBlock(1);
           }
@@ -257,6 +302,31 @@ namespace drewCo.CLI
       {
         return "GetBool";
       }
+      else if (fromType == typeof(float))
+      {
+        return "GetSingle";
+      }
+      else if (fromType == typeof(double))
+      {
+        return "GetDouble";
+      }
+      else if (fromType.IsArray)
+      {
+        var eType = fromType.GetElementType();
+        if (eType == typeof(string))
+        {
+          return "GetStringArray";
+        }
+        else if (eType == typeof(int))
+        {
+          return "GetIntArray";
+        }
+        else
+        {
+          throw new InvalidOperationException("Unsupported array type!");
+        }
+      }
+
       // Other cases here.....
       else
       {

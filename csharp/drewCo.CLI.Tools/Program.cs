@@ -22,7 +22,7 @@ internal class Program
 
     try
     {
-      int res = p.ParseCommandLine(args);
+      int res = p.ExectuteCommandLine(args);
       return res;
     }
     catch (Exception ex)

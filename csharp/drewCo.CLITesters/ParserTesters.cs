@@ -8,9 +8,16 @@ namespace drewCo.CLITesters
   // ==============================================================================================================================
   public class ParserTesters
   {
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Shows that command def aliases actually do something.
+    /// </summary>
+    [Test]
+    public void CanUseCommandDefAlias() {
 
+    }
 
-    // ----------------------------------------------------------------------    
+    // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// This is another test case that was added when I started dogfooding this project into other
     /// application that I am working on.  This is the most convenient way to test it all out and
@@ -131,7 +138,7 @@ namespace drewCo.CLITesters
 
         cmdExecuted = false;
         var args = new[] { "generate", "--Path", TEST_PATH, "--TargetLanguage", TEST_LANG, "-o", "my-file.cs" };
-        int cliRes = cli.ParseCommandLine(args);
+        int cliRes = cli.ExectuteCommandLine(args);
 
         Assert.That(cliRes, Is.EqualTo(0), "This command should have run!");
         Assert.IsTrue(cmdExecuted, "The command should have executed!");
@@ -141,7 +148,7 @@ namespace drewCo.CLITesters
       {
         cmdExecuted = false;
         var args = new[] { "generate" };
-        int cliRes = cli.ParseCommandLine(args);
+        int cliRes = cli.ExectuteCommandLine(args);
 
         Assert.That(cliRes, Is.EqualTo(Parser.DEFAULT_ERROR_CODE), "This command should be invalid!");
         Assert.IsFalse(cmdExecuted, "The command should not have executed!");
@@ -152,7 +159,7 @@ namespace drewCo.CLITesters
         cmdExecuted = false;
         var args = new[] { "badcommand" };
 
-        int cliRes = cli.ParseCommandLine(args);
+        int cliRes = cli.ExectuteCommandLine(args);
 
         Assert.That(cliRes, Is.EqualTo(Parser.DEFAULT_ERROR_CODE), "This command should be invalid!");
         Assert.IsFalse(cmdExecuted, "The command should not have executed!");
@@ -191,7 +198,7 @@ namespace drewCo.CLITesters
       var args = new[] { fromPath };
 
 
-      int res = cli.ParseCommandLine(args);
+      int res = cli.ExectuteCommandLine(args);
       Assert.That(res, Is.EqualTo(0));
 
       Assert.IsTrue(cmdExecuted, "The command should have been executed!");

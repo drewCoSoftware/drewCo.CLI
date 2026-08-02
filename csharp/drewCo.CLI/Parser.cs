@@ -108,7 +108,7 @@ namespace drewCo.CLI
         {
           if (parseResult?.HasValidOption(item) ?? true) { continue; }
 
-          toWrite.Add((GetCLIName(item), item.HelpText));
+          toWrite.Add((item.GetCLIName(), item.HelpText));
         }
         toWrite.Add((HELP_COMMAND, "Display this help message."));
       }
@@ -117,7 +117,7 @@ namespace drewCo.CLI
         // Display help for all commands...
         foreach (var item in AllCommands.Values)
         {
-          toWrite.Add((GetCLIName(item.Def), item.Def.HelpText));
+          toWrite.Add((item.Def.GetCLIName(), item.Def.HelpText));
         }
         toWrite.Add((HELP_COMMAND, "Display help information for a specific command."));
         toWrite.Add((VERSION_COMMAND, "Display version information."));
@@ -142,41 +142,9 @@ namespace drewCo.CLI
 
     }
 
-    // --------------------------------------------------------------------------------------------------------------------------
-    // SHARE:
-    public static string GetCLIName(CommandDef def)
-    {
-      string res = def.Name.ToLower();
-      return res;
-    }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    // SHARE:
-    /// <summary>
-    /// Get the name / aliases for the command option.
-    /// </summary>
-    public static string GetCLIName(CommandOption option)
-    {
-      // OPTIONS:
-      const bool INCLUDE_NON_ALIAS = false;
-
-      string res = "--" + option.Name;
-      if (option.Aliases != null)
-      {
-        res = string.Join(", ", option.Aliases);
-
-        if (INCLUDE_NON_ALIAS)
-        {
-          res += $"(--{option.Name})";
-        }
-      }
-
-      return res;
-
-    }
-
-    // --------------------------------------------------------------------------------------------------------------------------
-    public int ParseCommandLine(string[] args)
+    public int ExectuteCommandLine(string[] args)
     {
       bool printHelp = false;
 

@@ -1,5 +1,6 @@
 # This is just some fake command that we use to test support
 # for different data types.
+# @ALIAS many-types
 [ManyTypes]
 IsTest = false
 

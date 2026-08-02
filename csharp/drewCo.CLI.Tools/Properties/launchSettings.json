@@ -2,7 +2,7 @@
   "profiles": {
     "drewCo.CLI.Tools": {
       "commandName": "Project",
-      "commandLineArgs": "generate --path ReplayCommands\\defs.toml -o \"my-ouput.cs\" --lang csharp"
+      "commandLineArgs": "generate --path \"C:\\code\\repos\\drewCo.CLI\\csharp\\drewCo.CLITesters\\test-data\\ManyTypesDef.toml\" -o \"C:\\code\\repos\\drewCo.CLI\\csharp\\drewCo.CLITesters\\ExampleCommands\\ManyTypes.cs\" --lang csharp"
     }
   }
 }

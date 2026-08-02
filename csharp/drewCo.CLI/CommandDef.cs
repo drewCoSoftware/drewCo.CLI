@@ -17,6 +17,14 @@ public class CommandDef
 
 
   // --------------------------------------------------------------------------------------------------------------------------
+  public string GetCLIName()
+  {
+    string res = this.Alias != null ? this.Alias : this.Name.ToLower();
+    return res;
+  }
+
+
+  // --------------------------------------------------------------------------------------------------------------------------
   public CommandOption? GetOptionByName(string optionNameOrAlias)
   {
     foreach (var item in Options)
@@ -68,6 +76,29 @@ public class CommandOption
     bool res = Aliases?.Contains(nextArg) ?? false;
     return res;
   }
+
+
+
+  // --------------------------------------------------------------------------------------------------------------------------
+  public string GetCLIName()
+  {
+    // OPTIONS:
+    const bool INCLUDE_NON_ALIAS = false;
+
+    string res = "--" + Name;
+    if (Aliases != null)
+    {
+      res = string.Join(", ", Aliases);
+
+      if (INCLUDE_NON_ALIAS)
+      {
+        res += $"(--{Name})";
+      }
+    }
+
+    return res;
+  }
+
 
 }
 
