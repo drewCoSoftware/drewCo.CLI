@@ -97,6 +97,30 @@ namespace Tommy
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
+    public byte[]? GetByteArray(string key, byte[]? fallback = null)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+
+      var node = this[key];
+      if (!node.IsArray)
+      {
+        throw new InvalidOperationException($"Node: {key} is not an array!");
+      }
+
+      int count = node.ChildrenCount;
+      var res = new byte[count];
+      int index = 0;
+      foreach (var item in node.Children)
+      {
+        var nextData = (byte)item.AsInteger.Value;
+        res[index] = nextData;
+        ++index;
+      }
+
+      return res;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
     public int[]? GetIntArray(string key, int[]? fallback = null)
     {
       if (!this.HasKey(key)) { return fallback; }
@@ -192,6 +216,57 @@ namespace Tommy
 
       return res.AsInteger.Value;
     }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public UInt64 GetUInt64(string key, UInt64 fallback = UInt64.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsInteger) { return fallback; }
+
+      return (UInt64)res.AsInteger.Value;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public UInt32 GetUInt32(string key, UInt32 fallback = UInt32.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsInteger) { return fallback; }
+
+      return (UInt32)res.AsInteger.Value;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public UInt16 GetUInt16(string key, UInt16 fallback = UInt16.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsInteger) { return fallback; }
+
+      return (UInt16)res.AsInteger.Value;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public sbyte GetSByte(string key, sbyte fallback = sbyte.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsInteger) { return fallback; }
+
+      return (sbyte)res.AsInteger.Value;
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    public byte GetByte(string key, byte fallback = byte.MinValue)
+    {
+      if (!this.HasKey(key)) { return fallback; }
+      var res = this[key];
+      if (!res.HasValue || !res.IsInteger) { return fallback; }
+
+      return (byte)res.AsInteger.Value;
+    }
+
 
     // --------------------------------------------------------------------------------------------------------------------------
     public int GetInt(string key, int fallback = int.MinValue)

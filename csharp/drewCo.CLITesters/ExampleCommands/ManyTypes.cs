@@ -6,10 +6,10 @@ public class ManyTypes : ICommand
 {
   public Boolean IsTest = false;
   public String Name = "Name";
-  public Int32 Number = 123;
+  public UInt64 Number = 123;
   public Single Pie = 3.1415926f;
   public String[] Animals = [ "Dog", "Cat", "Monkey" ];
-  public Int32[] PickThree = [ 42, 27, 999 ];
+  public byte[] PickThree = [ 42, 27, 123 ];
 
   public ManyTypes() { }
 
@@ -18,10 +18,10 @@ public class ManyTypes : ICommand
     var res = new ManyTypes();
     res.IsTest = table.GetBool("IsTest", false);
     res.Name = table.GetString("Name", "Name");
-    res.Number = table.GetInt("Number", 123);
+    res.Number = table.GetUInt64("Number", 123);
     res.Pie = table.GetSingle("Pie", 3.1415926f);
     res.Animals = table.GetStringArray("Animals", [ "Dog", "Cat", "Monkey" ]);
-    res.PickThree = table.GetIntArray("PickThree", [ 42, 27, 999 ]);
+    res.PickThree = table.GetByteArray("PickThree", [ 42, 27, 123 ]);
     return res;
   }
 
@@ -58,7 +58,7 @@ public class ManyTypes : ICommand
     var numberOption = new CommandOption();
     numberOption.Name = "Number";
     numberOption.HelpText = "";
-    numberOption.DataType = typeof(Int32);
+    numberOption.DataType = typeof(UInt64);
     numberOption.IsRequired = false;
     numberOption.Options = null;
     res.Options.Add(numberOption);
@@ -82,7 +82,7 @@ public class ManyTypes : ICommand
     var pickThreeOption = new CommandOption();
     pickThreeOption.Name = "PickThree";
     pickThreeOption.HelpText = "";
-    pickThreeOption.DataType = typeof(Int32[]);
+    pickThreeOption.DataType = typeof(byte[]);
     pickThreeOption.IsRequired = false;
     pickThreeOption.Options = null;
     res.Options.Add(pickThreeOption);

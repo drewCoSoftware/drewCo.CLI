@@ -11,6 +11,30 @@ namespace drewCo.CLITesters
 
     // --------------------------------------------------------------------------------------------------------------------------
     /// <summary>
+    /// Shows that we are able to understand and deal with type hints.
+    /// </summary>
+    [Test]
+    public void CanDecodeTypeHints()
+    {
+      // Add more as needed!
+      var tests=  new List<(string, string)>() {
+        ("i8", "sbyte"),
+        ("i16", "Int16"),
+        ("u16", "UInt16" ),
+        ("f32[]", "float[]")
+      };
+
+      foreach (var t in tests)
+      {
+        string actual = CodeGen.ConvertTypeName(new CommandOption() { TypeHint = t.Item1 });
+        string expected = t.Item2;
+        Assert.That(actual, Is.EqualTo(expected), $"Incorrect output: '{actual}' for hint: '{expected}'");
+      }
+
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    /// <summary>
     /// This test case was provided to show that we can correctly parse out array values from a TOML file.
     /// </summary>
     [Test]
@@ -130,12 +154,12 @@ namespace drewCo.CLITesters
       {
         // String Array Type
         var op = def.GetOptionByName("Animals");
-        Assert.That(op.DataType.Name, Is.EqualTo("String[*]"));
+        Assert.That(op.DataType.Name, Is.EqualTo("String[]"));
       }
       {
         // Integer Array Type
         var op = def.GetOptionByName("PickThree");
-        Assert.That(op.DataType.Name, Is.EqualTo("Int32[*]"));
+        Assert.That(op.DataType.Name, Is.EqualTo("Byte[]"));
       }
     }
 

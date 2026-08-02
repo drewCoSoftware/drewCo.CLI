@@ -7,10 +7,14 @@ IsTest = false
 # Just a name.
 # @ALIAS -m, --my-alias
 Name = "Name"
+
+# @TYPE u64
 Number = 123
 Pie = 3.1415926
 Animals = ["Dog", "Cat", "Monkey"]
-PickThree = [42, 27, 999]
+
+# @TYPE u8[]
+PickThree = [42, 27, 123]
 
 #[ManyTypes.Nested]
 #Complex = true

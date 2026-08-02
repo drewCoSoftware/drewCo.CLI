@@ -1,4 +1,5 @@
-﻿using Tommy;
+﻿using System.Net.WebSockets;
+using Tommy;
 
 namespace drewCo.CLI
 {
@@ -47,10 +48,10 @@ namespace drewCo.CLI
     /// The constraints are embedded into the TOML comments, starting
     /// on each new line, and they will be stripped out of the overall comment...
     /// </summary>
-    internal static (string Text, Constraints Constraints) ParseTOMLComment(string input, bool isCommandDef)
+    internal static (string Text, CommandOptions Options) ParseTOMLComment(string input, bool isCommandDef)
     {
 
-      Constraints c = new Constraints();
+      CommandOptions c = new CommandOptions();
       List<string> text = new List<string>();
 
       if (!string.IsNullOrWhiteSpace(input))
@@ -63,6 +64,11 @@ namespace drewCo.CLI
           {
             // NOTE: The rest of the line is ignored on purpose.
             c.IsRequired = true;
+          }
+          else if (l.StartsWith("@TYPE"))
+          {
+            string val = l.Substring("@TYPE".Length).Trim();
+            c.TypeHint = val;
           }
           else if (l.StartsWith("@OPTIONS"))
           {
@@ -122,8 +128,15 @@ namespace drewCo.CLI
     /// </summary>
     /// <param name="fromNode"></param>
     /// <returns></returns>
-    public static Type GetDataType(TomlNode fromNode)
+    public static Type GetDataType(TomlNode fromNode, CommandOptions option)
     {
+      if (option.TypeHint != null)
+      {
+        var h = new TypeHint(option.TypeHint);
+        var t = h.AsType();
+        return t;
+      }
+
       if (fromNode.IsString) { return typeof(string); }
       if (fromNode.IsInteger) { return typeof(int); }
       if (fromNode.IsFloat) { return typeof(float); }
@@ -134,22 +147,9 @@ namespace drewCo.CLI
       // For our arrays, all children must be of the same type....
       if (fromNode.IsArray)
       {
+        Type arrayType = ResolveArrayType(fromNode, option);
 
-        var allTypes = new List<Type>();
-        var kids = fromNode.AsArray.Children;
-        foreach (var item in kids)
-        {
-          allTypes.Add(GetDataType(item));
-        }
-        allTypes = allTypes.Distinct().ToList();
-
-        Type arrayType = allTypes[0];
-        if (allTypes.Count > 1)
-        {
-          arrayType = typeof(object);
-        }
-
-        var res = arrayType.MakeArrayType(1);
+        var res = arrayType.MakeArrayType();
         return res;
       }
 
@@ -162,6 +162,35 @@ namespace drewCo.CLI
       // The child nodes will have to be evaluated, and will have to all be of the same type tho.
 
       throw new InvalidOperationException("Could not determine a supported type for this node!");
+    }
+
+    // --------------------------------------------------------------------------------------------------------------------------
+    private static Type ResolveArrayType(TomlNode fromNode, CommandOptions option)
+    {
+      if (option.TypeHint != null)
+      {
+        var h = new TypeHint(option.TypeHint);
+        var t = h.AsType();
+        return t.GetElementType();
+      }
+
+      var allTypes = new List<Type>();
+      var kids = fromNode.AsArray.Children;
+      foreach (var item in kids)
+      {
+        allTypes.Add(GetDataType(item, option));
+      }
+      allTypes = allTypes.Distinct().ToList();
+
+
+      Type arrayType = allTypes[0];
+      if (allTypes.Count > 1)
+      {
+        throw new InvalidOperationException("Mixed type arrays are not supported at this time!");
+        arrayType = typeof(object);
+      }
+
+      return arrayType;
     }
   }
 

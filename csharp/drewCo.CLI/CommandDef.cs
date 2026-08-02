@@ -48,6 +48,8 @@ public class CommandOption
   public string DefaultValue { get; set; }
   public string HelpText { get; set; }
 
+  public string? TypeHint { get; set; } = null;
+
   /// <summary>
   /// This is used during parsing.
   /// </summary>
@@ -104,10 +106,10 @@ public class CommandOption
 
 // =========================================================================================================================
 /// <summary>
-/// Command constraints / options.
+/// Command options.
 /// We don't want to go nuts with this stuff as we want to avoid creating some kind of meta language...
 /// </summary>
-internal class Constraints
+public class CommandOptions
 {
   /// <summary>
   /// Indicates that the command is required.
@@ -120,5 +122,7 @@ internal class Constraints
   public string[]? Options { get; set; }
 
   public string[]? Aliases { get; set; }
+
+  public string? TypeHint { get; set; }
 }
 

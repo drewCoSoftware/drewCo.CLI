@@ -13,4 +13,10 @@
     <ProjectReference Include="..\drewCo.CLI\drewCo.CLI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Commands\GenerateCommandDef.toml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
