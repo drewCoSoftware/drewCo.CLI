@@ -68,7 +68,7 @@ namespace drewCo.CLI
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    private void PrintHelpAndMessages(string? helpCommand, OptionsParseResult? parseResult)
+    private void PrintHelpAndMessages(DefEntry? entry, string? helpCommand, OptionsParseResult? parseResult)
     {
 
       if (parseResult != null)
@@ -102,7 +102,7 @@ namespace drewCo.CLI
       if (helpCommand != null)
       {
         // Display the help for this specific command.
-        var match = AllCommands[helpCommand];
+        var match = entry ?? AllCommands[helpCommand];
 
         foreach (var item in match.Def.Options)
         {
@@ -151,7 +151,7 @@ namespace drewCo.CLI
       if (args.Length == 0 || args[0] == HELP_COMMAND)
       {
         // Print Help.
-        PrintHelpAndMessages(null, null);
+        PrintHelpAndMessages(null, null, null);
         return ErrorCode;
       }
 
@@ -192,14 +192,14 @@ namespace drewCo.CLI
         // TODO: Maybe some different text here depending on if we used a file or not....
         // TODO: We need to make note of the errors so that they can be written in the proper order (after the program info, mostly)
         AddMessage($"Unknown command: {args[0]}!");
-        PrintHelpAndMessages(null, null);
+        PrintHelpAndMessages(null, null, null);
         return ErrorCode;
       }
 
       var parseResult = ParseOptionValues(args, table, entry);
       if (parseResult.Errors.Count > 0)
       {
-        PrintHelpAndMessages(useCommand, parseResult);
+        PrintHelpAndMessages(entry, useCommand, parseResult);
         return ErrorCode;
       }
 
@@ -219,7 +219,7 @@ namespace drewCo.CLI
 
       if (printHelp)
       {
-        PrintHelpAndMessages(useCommand, null);
+        PrintHelpAndMessages(entry, useCommand, null);
         return ErrorCode;
       }
 

@@ -203,7 +203,7 @@ if __name__ == "__main__":
 
     if cmd == "get" or cmd == "get-asm-version":
         # We will always use this as our "source of truth" for version information.
-        file = find_files("./drewco.Tools", ["AssemblyInfo.cs"])[0]
+        file = find_files("./drewco.CLI", ["AssemblyInfo.cs"])[0]
         version = get_assembly_info_version(file)
         print(version)
 
@@ -219,8 +219,8 @@ if __name__ == "__main__":
         # print("nuspec files are: \n" + "\n".join(files))
 
     elif cmd == "update":
-        asm1 = find_files("./drewco.Tools", ["AssemblyInfo.cs"])[0]
-        oldVersion = get_assembly_info_version(asm1)
+        # asm1 = find_files("./drewco.CLI", ["AssemblyInfo.cs"])[0]
+        # oldVersion = get_assembly_info_version(asm1)
 
         manualVersion = None
         useVersionPart = VersionPart.REVISION
@@ -252,10 +252,10 @@ if __name__ == "__main__":
         nuspecFile = files[0]
         update_nuspec_version(nuspecFile, newVersion)
 
-        print("updating assembly info file (classic)...")
-        asm1 = find_files("./drewco.Tools", ["AssemblyInfo.cs"])[0]
-        update_assembly_info_version(asm1, newVersion)
+        # print("updating assembly info file (classic)...")
+        # asm1 = find_files("./drewco.CLI", ["AssemblyInfo.cs"])[0]
+        # update_assembly_info_version(asm1, newVersion)
 
         print("updating netcore versions...")
-        asm2 = "./drewCo.Tools.Core/drewCo.Tools.Core.csproj"
+        asm2 = "./drewCo.CLI/drewCo.CLI.csproj"
         update_netcore_version(asm2, newVersion)
